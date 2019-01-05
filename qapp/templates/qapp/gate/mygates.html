@@ -1,0 +1,38 @@
+{% extends 'qapp/base.html' %}
+
+{% block title %}QAPP - moje bramki{% endblock%}
+
+{% block content %}
+<div class="card" id="my_gates">
+    <table class="wp-table">
+        <tr>
+            <th>Typ</th>
+            <th>Tramwaj</th>
+            <th>Człon</th>
+            <th>Wózek</th>
+            <th>Typ wózka</th>
+            <th>Obszar</th>
+            <th>Numer operacji</th>
+            <th>Nazwa</th>
+            <th>Autor</th>
+            <th>Odpowiedzialny</th>
+            <th>Edytuj</th>
+        </tr>
+        {% for gate in gates %}
+            <tr>
+                <td>{{ gate.type }}</td>
+                <td>{{ gate.tram|default_if_none:"-----" }}</td>
+                <td>{{ gate.car|default_if_none:"-----" }}</td>
+                <td>{{ gate.bogie|default_if_none:"-----" }}</td>
+                <td>{{ gate.bogie_type|default_if_none:"-----" }}</td>
+                <td>{{ gate.area }}</td>
+                <td>{{ gate.operation_no|default_if_none:"-----" }}</td>
+                <td>{{ gate.name }}</td>
+                <td>{{ gate.author }}</td>
+                <td>{{ gate.area.responsible }}</td>
+                <td><a href="{{ gate.get_absolute_url }}">KLIK</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

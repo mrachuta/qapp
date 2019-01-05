@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% load user_tags %}
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+    <div class="header">
+        <h1>QAPP</h1>
+    </div>
+    <div class="navbar">
+        <a class="leftlink" href="{% url 'qapp:gate_list' %}">Strona główna</a>
+        <a class="leftlink" href="{% url 'qapp:bjc_list' %}">BJ Człony</a>
+        <a class="leftlink" href="{% url 'qapp:bjw_list' %}">BJ Wózki</a>
+        <a class="leftlink" href="{% url 'qapp:iks_list' %}">IK Solaris</a>
+        <a class="leftlink" href="{% url 'qapp:ikk_list' %}">IK Klient</a>
+        {% if request.user.is_authenticated %}
+            {% if request.user|dzj_member %}
+                <a class="leftlink" href="{% url 'qapp:gate_add' %}">Dodaj bramkę</a>
+                <!-- <a href="% url 'qapp:edit' %">Edytuj bramkę</a> -->
+            {% endif %}
+            <a class="leftlink" href="{% url 'qapp:my_gates' %}">Moje bramki</a>
+            <div class="dropdown">
+                <button class="dropbtn">{{ request.user.first_name }} {{request.user.last_name}} ({{ request.user.username }})</button>
+                <div class="dropdown-content">
+                  <a href="{% url 'logout' %}?next={% url 'qapp:gate_list' %}">Wyloguj</a>
+                </div>
+          </div>
+        {% else %}
+            <a href="{% url 'login' %}?next={% url 'qapp:gate_list' %}" style="float:right">Zaloguj</a>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="leftcolumn">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div class="rightcolumn">
+            <div class="card" id="firstcard">
+                {% block firstcard %}
+                {% endblock %}
+            </div>
+            <div class="card" id="secondcard">
+                <h3>Najwięcej odrzuceń</h3>
+                <hr>
+                <ol>
+                {% for gate in topfive %}
+                    <li><a href="{{ gate.get_absolute_url}}">{{ gate.name }}<br>(ilość odrzuceń: {{ gate.reject_counter }})</a></li>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <img src="{% static 'img/python_powered.png' %}"><img src="{% static 'img/and_ed.png' %}"><img src="{% static 'img/django_powered.png' %}">
+    </div>
+</body>
+</html>
