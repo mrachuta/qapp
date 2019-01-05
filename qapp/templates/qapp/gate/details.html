@@ -1,0 +1,155 @@
+{% extends 'qapp/base.html' %}
+{% load user_tags %}
+
+{% block title %}QAPP - {{ gate.name }} - szczegóły{% endblock %}
+
+{% block content %}
+<div class="card" id="gate_{{ gate.id}}_details">
+    <table class="wp-table">
+        <tr>
+            <th>Informacje</th>
+            <th>Wartości</th>
+        </tr>
+        <tr>
+            <td>Typ:</td>
+            <td>{{ gate.get_type_display }}</td>
+        </tr>
+        {% if gate.type == 'BJW' %}
+        <tr>
+            <td>Wózek:</td>
+            <td>{{ gate.bogie }}</td>
+        </tr>
+        <tr>
+            <td>Typ wózka:</td>
+            <td>{{ gate.bogie_type }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td>Numer tramwaju:</td>
+            <td>{{ gate.tram }}</td>
+        </tr>
+        <tr>
+            <td>Człon:</td>
+            <td>{{ gate.car }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Obszar:</td>
+            <td>{{ gate.area }} ({{ gate.area.get_area_display }})</td>
+        </tr>
+        <tr>
+            <td>Brygadzista:</td>
+            <td>{{ gate.area.responsible.first_name }} {{ gate.area.responsible.last_name }} ({{ gate.area.responsible }})</td>
+        </tr>
+        {% if gate_type == 'BJW' or gate_type == 'BJC' %}
+            <tr>
+                <td>Numer operacji:</td>
+                <td>{{ gate.operation_no }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td>Nazwa:</td>
+            <td>{{ gate.name }}</td>
+        </tr>
+        <tr>
+            <td>Wytyczne</td>
+            <td>{{ gate.content | linebreaks }}</td>
+        </tr>
+        <tr>
+            <td>Data utworzenia:</td>
+            <td>{{ gate.creation_date|date:"Y-m-d H:i:s.u" }}<br>
+            (ostatnia zmiana: {% if gate.modify_date != None %} {{ gate.modify_date|date:"Y-m-d H:i:s.u" }} {% else %} nigdy {% endif %})</td>
+        </tr>
+        <tr>
+            <td>Dodatkowe pliki:</td>
+            <td>
+                {% if gate.gatefile_set.all %}
+                    {% for document in gate.gatefile_set.all %}
+                        <div class="file">
+                            <a class="filelink" href="{{ document.file.url }}">{{ document.filename }}</a><br>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    Brak dodatkowych plików
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Status realizacji:</td>
+            <td>{{ gate.get_gate_status_display }} ({{ gate.gate_status }})</td>
+        </tr>
+        <tr>
+            <td>Ilość odrzuceń:</td>
+            <td>{{ gate.reject_counter }}</td>
+        </tr>
+        <tr>
+            <td>Ocena</td>
+            <td>{{ gate.get_gate_rating_display }}</td>
+        </tr>
+    </table>
+    <br>
+</div>
+<div class="card" id="gate_{{ gate.id}}_form">
+    <form action="{% url 'qapp:update' gate.pk %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if request.user|dzj_member or request.user == gate.area.responsible %}
+            {% for field in comment_form %}
+                {{ field.label_tag }}
+                    <br>
+                    {% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
+                    <br>
+            {% endfor %}
+            {{ comment_formset.management_form }}
+            Dodaj opcjonalne pliki:
+            <br>
+            {% for form in comment_formset %}
+                {% for field in form.visible_fields %}
+                    {% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font><br>
+                {% endfor %}
+            {% endfor %}
+            {% if gate.gate_status == 'R' or gate.gate_status == 'P' %}
+                <button name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
+            {% endif %}
+        {% endif %}
+        {% if request.user|dzj_member and gate.gate_status == 'O' %}
+            <div class="fastaction">
+                <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
+                <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
+            </div>
+            <button name="new_rating" type="submit" value="OK">Akceptuj</button>
+            <button name="new_rating" type="submit" value="NOK">Odrzuć</button>
+        {% endif %}
+    </form>
+</div>
+<div class="card" id="gate_{{ gate.id}}_comments">
+    {% for comment in gate.comment_set.all reversed %}
+        <p>Autor: {{ comment.author.first_name }} {{ comment.author.last_name}} ({{ comment.author }}) <i>(id komentarza: #{{ comment.id }})</i></p>
+        <p>Treść: {{ comment.text }}</p>
+            {% for document in comment.commentfile_set.all %}
+                <p>Plik: <a href="{{ document.file.url }}">{{ document.filename }}</a></p>
+            {% endfor %}
+        <p>Data: {{ comment.date_time|date:"Y-d-m, H:i:s" }}</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block firstcard %}
+    <h3>Szybkie akcje:</h3>
+    <hr>
+    <ul>
+        <li><a href="{{ request.META.HTTP_REFERER }}">Wróć do poprzedniego widoku</a></li>
+        {% if gate.type == 'BJW' %}
+            <li><a href="{% url 'qapp:gate_list' %}{{ gate.type|lower }}?bogie={{ gate.bogie.pk }}&bogie_type={{ gate.bogie_type }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na wózku {{ gate.bogie }} typ {{ gate.bogie_type }}</a></li>
+        {% else %}
+            <li><a href="{% url 'qapp:gate_list' %}{{ gate.type|lower }}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
+        {% endif %}
+        <li><a href="{% url 'qapp:log' gate.pk %}" target="_blank">Zobacz log</a></li>
+        <li><a href="#">Skontaktuj się z autorem: {{ gate.author }}</a></li>
+    </ul>
+
+
+
+{% endblock %}
+
+
+

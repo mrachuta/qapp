@@ -1,0 +1,241 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial;
+  padding: 10px;
+  background: #f1f1f1;
+}
+
+select[multiple] {
+    width: 145px;
+}
+
+/* Table */
+
+.wp-table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+.wp-table tr:nth-child(even) {
+    background-color: #f1f1f1;
+}
+
+.wp-table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.wp-table tr.clickable:hover {
+    background-color: #333;
+    color: white;
+}
+
+.wp-table th:first-child,
+.wp-table td:first-child {
+    padding-left: 16px;
+}
+
+
+.wp-table td,
+.wp-table th {
+    padding: 8px 8px;
+    display: table-cell;
+    text-align: left;
+    vertical-align: top;
+}
+
+.wp-table th {
+    font-weight: bold;
+}
+
+.wp-table {
+    font-size: 13px!important;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    display: table;
+}
+
+/* Header/Blog Title */
+.header {
+  padding: 30px;
+  text-align: center;
+  background: white;
+  background: url(../img/jamnik_ed.png), url(../img/tram_ed.png);
+  background-size: 200px;
+  background-repeat: no-repeat;
+  background-position: left top, right top;
+  background-color: white;
+}
+
+.header h1 {
+  font-size: 30px;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: #333333;
+}
+
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.dropdown {
+  float: right;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.navbar a:hover, .dropdown:hover .dropbtn {
+  background-color: #dddddd;
+  color: #000000;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 18px;
+  background-color: #333333;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Fast action */
+
+.fastaction button {
+  position: fixed;
+  left: -130px;
+  transition: 0.3s;
+  padding: 15px;
+  width: 160px;
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  border-radius: 0 5px 5px 0;
+}
+
+.fastaction button:hover {
+  left: -5px;
+}
+
+#ok {
+  top: 250px;
+  background-color: #4CAF50;
+}
+
+#nok {
+  top: 310px;
+  background-color: #f44336;
+  }
+
+/* File icon */
+
+.file {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.filelink {
+    background: url('../img/file_ed.png');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+    background-position: left center;
+    background-size: 25px 25px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+/* Create two unequal columns that floats next to each other */
+/* Left column */
+.leftcolumn {
+  float: left;
+  width: 75%;
+}
+
+/* Right column */
+.rightcolumn {
+  float: left;
+  width: 25%;
+  background-color: #f1f1f1;
+  padding-left: 20px;
+}
+
+/* Fake image */
+.fakeimg {
+  background-color: #aaa;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Add a card effect for articles */
+.card {
+  background-color: white;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Footer */
+.footer {
+  padding: 20px;
+  text-align: center;
+  background: #ddd;
+  margin-top: 20px;
+}
+
+/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 800px) {
+  .leftcolumn, .rightcolumn {
+    width: 100%;
+    padding: 0;
+  }
+}
+
+/* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+@media screen and (max-width: 400px) {
+  .topnav a {
+    float: none;
+    width: 100%;
+  }
+}

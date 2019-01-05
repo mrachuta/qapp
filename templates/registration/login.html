@@ -1,0 +1,42 @@
+{% extends 'qapp/base.html' %}
+
+{% block content %}
+
+
+<div class="card">
+  {% if form.errors %}
+    <p>Login lub hasło nie są prawidłowe.</p>
+  {% endif %}
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p>Twoje konto nie ma dostępu do tej strony.
+        Aby przejść dalej, zaloguj się kontem posiadający dostęp do żądanych zasobów</p>
+    {% else %}
+      <p>Zaloguj się, aby przejść do żądanych zasobów.</p>
+    {% endif %}
+  {% endif %}
+  <form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+    <div>
+      <table>
+        <tr>
+          <td>Nazwa użytkownika: </td>
+          <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+          <td>Hasło: </td>
+          <td>{{ form.password }}</td>
+        </tr>
+     </table>
+    </div>
+  <div>
+    <input type="submit" value="login">
+    <input type="hidden" name="next" value="{{ next }}">
+  </div>
+  </form>
+</div>
+
+{# Assumes you setup the password_reset view in your URLconf #}
+<p><a href="{% url 'password_reset' %}">Zapomniałeś hasła?</a></p>
+
+{% endblock %}

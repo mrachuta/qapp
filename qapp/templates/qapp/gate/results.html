@@ -1,0 +1,21 @@
+{% extends 'qapp/base.html' %}
+
+{% block title %}QAPP - rezultaty zmian{% endblock%}
+
+{% block content %}
+<div class="card">
+    <p>Rezultaty zmian:</p>
+    {% for time, info in log_messages.items %}
+        {% if info.1 == 'E' %}
+            <p><font color="red">{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</font></p>
+        {% else %}
+            <p>{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</p>
+        {% endif %}
+    {% endfor %}
+    <script>
+        var timer = setTimeout(function() {
+            window.location='{{ request.META.HTTP_REFERER }}'
+        }, 5000);
+    </script>
+</div>
+{% endblock %}
