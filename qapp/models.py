@@ -5,8 +5,24 @@ from django.core.validators import MinValueValidator, MaxValueValidator, Validat
 from django.urls import reverse
 import ntpath
 import uuid
+import os
 from django.conf import settings
-# Create your models here.
+from django.utils.deconstruct import deconstructible
+
+
+@deconstructible
+class UploadToPathAndRename(object):
+
+    def __init__(self, path):
+        self.sub_path = path
+
+    def __call__(self, instance, filename):
+        comm_pk = instance.file_rel_comment.pk
+        org_filename = filename.split('.')[:-1]
+        ext = filename.split('.')[-1]
+        filename = '{}_{}.{}'.format(comm_pk, org_filename, ext)
+        # return the whole path to the file
+        return os.path.join(self.sub_path, filename)
 
 
 class Tram(models.Model):
@@ -239,7 +255,6 @@ class Gate(models.Model):
         ])
 
 
-
 class GateFile(models.Model):
     file_rel_gate = models.ForeignKey(Gate, on_delete=models.CASCADE)
     file = models.FileField(upload_to='uploads_g', blank=True, null=True)
@@ -251,8 +266,10 @@ class GateFile(models.Model):
         return u'Załącznik do bramki: {}'.format(self.file)
 
 
+
 class Comment(models.Model):
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     com_rel_gate = models.ForeignKey(Gate, on_delete=models.CASCADE)
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     text = models.TextField(max_length=2000, blank=True, null=True)
@@ -265,13 +282,14 @@ class Comment(models.Model):
 
 class CommentFile(models.Model):
     file_rel_comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    file = models.FileField(upload_to='uploads_c', blank=True, null=True)
+    file = models.FileField(upload_to=UploadToPathAndRename(os.path.join('uploads_c')), blank=True, null=True)
 
     def filename(self):
         return ntpath.basename(self.file.name)
 
     def __str__(self):
         return 'Załącznik do komentarza: {}'.format(self.file)
+
 
 
 class Log(models.Model):

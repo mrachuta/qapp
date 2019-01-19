@@ -139,10 +139,11 @@ select[multiple] {
 
 .fastaction button {
   position: fixed;
-  left: -130px;
+  right: -180px;
   transition: 0.3s;
   padding: 15px;
-  width: 160px;
+  width: 270px;
+  height: 130px;
   text-decoration: none;
   font-size: 20px;
   color: white;
@@ -150,16 +151,16 @@ select[multiple] {
 }
 
 .fastaction button:hover {
-  left: -5px;
+  right: -5px;
 }
 
 #ok {
-  top: 250px;
+  top: 270px;
   background-color: #4CAF50;
 }
 
 #nok {
-  top: 310px;
+  top: 410px;
   background-color: #f44336;
   }
 
@@ -225,7 +226,7 @@ select[multiple] {
 }
 
 /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1080px) {
   .leftcolumn, .rightcolumn {
     width: 100%;
     padding: 0;

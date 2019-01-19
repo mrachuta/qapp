@@ -25,7 +25,7 @@ SECRET_KEY = '+)5@od6hd&_tbeaegfxo^&b)=38h8i9-x-n)b+^@j9567^yy7m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -115,7 +115,7 @@ STATICFILES_DIRS = [
    os.path.join(BASE_DIR, "static"),
 ]
 """
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
