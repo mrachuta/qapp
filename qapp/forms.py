@@ -95,7 +95,7 @@ class CommentFileAddForm(forms.ModelForm):
             'file': u'Plik'
         }
         widgets = {
-            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera'})
+            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'change(this)'})
         }
 
 
@@ -165,5 +165,5 @@ class GateChangeForm(forms.ModelForm):
 
 
 GateFileAddFormSet = forms.inlineformset_factory(Gate, GateFile, form=GateFileAddForm, extra=3, can_delete=False)
-CommentFileAddFormSet = forms.inlineformset_factory(Comment, CommentFile, form=CommentFileAddForm, extra=5, can_delete=False)
+CommentFileAddFormSet = forms.inlineformset_factory(Comment, CommentFile, form=CommentFileAddForm, extra=3, can_delete=False)
 GateFileChangeFormSet = forms.inlineformset_factory(Gate, GateFile, form=GateFileAddForm, extra=3, can_delete=True)
