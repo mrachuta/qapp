@@ -66,7 +66,7 @@
                 {% if gate.gatefile_set.all %}
                     {% for document in gate.gatefile_set.all %}
                         <div class="file">
-                            <a class="filelink" href="{{ document.file.url }}">{{ document.filename }}</a><br>
+                            <a class="filelink" href="{{ document.file.url }}" target="_blank">{{ document.filename }}</a><br>
                         </div>
                     {% endfor %}
                 {% else %}
@@ -126,59 +126,11 @@
         <p>Autor: {{ comment.author.first_name }} {{ comment.author.last_name}} ({{ comment.author }}) <i>(id komentarza: #{{ comment.id }})</i></p>
         <p>Treść: {{ comment.text }}</p>
             {% for document in comment.commentfile_set.all %}
-                <p>Plik: <a href="{{ document.file.url }}">{{ document.filename }}</a></p>
+                <p>Plik: <a href="{{ document.file.url }}" target="_blank">{{ document.filename }}</a></p>
             {% endfor %}
         <p>Data: {{ comment.date_time|date:"Y-d-m, H:i:s" }}</p>
     {% endfor %}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/screw-filereader@1.4.3/index.min.js"></script>
-<script>
-function FileListItem(a) {
-  a = [].slice.call(Array.isArray(a) ? a : arguments)
-  for (var c, b = c = a.length, d = !0; b-- && d;) d = a[b] instanceof File
-  if (!d) throw new TypeError("expected argument to FileList is File or array of File objects")
-  for (b = (new ClipboardEvent("")).clipboardData || new DataTransfer; c--;) b.items.add(a[c])
-  return b.files
-}
-
-function change(selectObj) {
-  const file = selectObj.files[0]
-	if (!file) return
-
-	file.image().then(img => {
-    const canvas = document.createElement('canvas')
-		const ctx = canvas.getContext('2d')
-    const maxWidth = 1600
-    const maxHeight = 1200
-
-    // calculate new size
-    const ratio = Math.min(maxWidth / img.width, maxHeight / img.height)
-    const width = img.width * ratio + .5|0
-    const height = img.height * ratio + .5|0
-
-    // resize the canvas to the new dimensions
-    canvas.width = width
-    canvas.height = height
-
-    // scale & draw the image onto the canvas
-    ctx.drawImage(img, 0, 0, width, height)
-    document.body.appendChild(canvas)
-
-    // Get the binary (aka blob)
-    canvas.toBlob(blob => {
-      const resizedFile = new File([blob], file.name, file)
-      const fileList = new FileListItem(resizedFile)
-
-      // temporary remove event listener since
-      // assigning a new filelist to the input
-      // will trigger a new change event...
-      selectObj.onchange = null
-      selectObj.files = fileList
-      selectObj.onchange = change
-    }, 'image/jpeg', 0.70)
-  })
-}
-</script>
 {% endblock %}
 
 {% block firstcard %}
@@ -192,6 +144,9 @@ function change(selectObj) {
             <li><a href="{% url 'qapp:gate_list' %}{{ gate.type|lower }}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
         {% endif %}
         <li><a href="{% url 'qapp:log' gate.pk %}" target="_blank">Zobacz log</a></li>
+        {% if request.user|dzj_member %}
+        <li><a href="{% url 'qapp:edit' gate.pk %}">Edytuj</a></li>
+        {% endif %}
         <li><a href="#">Skontaktuj się z autorem: {{ gate.author }}</a></li>
     </ul>
 

@@ -27,12 +27,12 @@ def generate_log(curr_user, pk, log_dict, gate, category, action, *args):
     curr_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S:%f")
 
     act_type = {
-        'rating': u'Zaktualizowano ocenę: {}'.format(new_value),
-        'status': u'Zaktualizowano status: {}'.format(new_value),
-        'comment': u'Dodano komentarz',
-        'file': u'Dodano plik',
-        'newgate': u'Utworzono bramkę',
-        'editgate': u'Zaktualizowano bramkę'
+        'rating': u'zaktualizowano ocenę: {}'.format(new_value),
+        'status': u'zaktualizowano status: {}'.format(new_value),
+        'comment': u'dodano komentarz',
+        'file': u'dodano plik',
+        'newgate': u'utworzono bramkę',
+        'editgate': u'zmieniono bramkę'
     }
 
     gate.log_set.create(
@@ -271,25 +271,29 @@ def gate_add(request):
     if request.method == "POST":
         gate_form = GateAddForm(request.POST)
         gate_formset = GateFileAddFormSet(request.POST, request.FILES)
+        print('request.POST')
         print(request.POST)
         if gate_form.is_valid() and gate_formset.is_valid():
+            print('cleaned_data')
             print(gate_form.cleaned_data)
-            try:
-                gate = gate_form.save(commit=False)
-                gate.id = None
-                gate.modify_date = None
-                gate.save()
-                for form in gate_formset:
-                    if form.cleaned_data != {}:
-                        a = form.save(commit=False)
-                        a.id = None
-                        a.file_rel_gate = gate
-                        a.save()
-                generate_log(request.user, gate.pk, log_messages, gate, 'S', 'newgate')
-            except (IntegrityError, ValidationError):
-                log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'E', u'Bramka nie została dodana']
-            else:
-                log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'S', u'Bramka została dodana']
+            for tram in gate_form.cleaned_data['tram']:
+                try:
+                    gate = gate_form.save(commit=False)
+                    gate.id = None
+                    gate.tram = tram
+                    gate.modify_date = None
+                    gate.save()
+                    for form in gate_formset:
+                        if form.cleaned_data != {}:
+                            a = form.save(commit=False)
+                            a.id = None
+                            a.file_rel_gate = gate
+                            a.save()
+                    generate_log(request.user, gate.pk, log_messages, gate, 'S', 'newgate')
+                except (IntegrityError, ValidationError):
+                    log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'E', u'Bramka nie została dodana']
+                else:
+                    log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'S', u'Bramka została dodana']
             if 'save_add_another' in request.POST:
 
                 init_params = {
@@ -382,44 +386,32 @@ class EditGate(generic.UpdateView):
 """
 
 
-def gate_edit(request, tram, car, area, operation_no):
-
+def gate_edit(request, pk):
     log_messages = {}
-    tram_code = ''.join([tram, car, operation_no])
+    gate = get_object_or_404(Gate, pk=pk)
+    fields_to_show = ['operation_no', 'name', 'content', 'modify_date']
     if request.method == "POST":
-        gate_form = GateChangeForm(request.POST)
-        gate_formset = GateFileChangeFormSet(request.POST, request.FILES)
+        print('request.POST')
+        print(request.POST)
+        gate_form = GateChangeForm(request.POST, instance=gate)
+        gate_formset = GateFileChangeFormSet(request.POST, request.FILES, instance=gate)
         if gate_form.is_valid() and gate_formset.is_valid():
-            print(gate_form.cleaned_data)
-            for a_tram in gate_form.cleaned_data['trams_to_apply']:
-                try:
-                    print('Zmienian dla tramwaju {}'.format(a_tram))
-                    #edgate = get_object_or_404(Gate, tram__number=atram, car=car, area__area=area, operation_no=operation_no)
-                    #edgate = gateform.save(commit=False)
-                    edited_gate = Gate.objects.update(**gate_form.cleaned_data).filter(tram__number=a_tram, car=car, area__area=area, operation_no=operation_no)
-                    #edgate.modify_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-                    #edgate.save()
-                    for form in formset:
-                        if form.cleaned_data != {}:
-                            print('Zmieniam formset dla przypadku {}'.format(form))
-                            a = form.save(commit=False)
-                            a.file_rel_gate = edgate
-                            a.save()
-                    generate_log(request.user, tram_code, log_messages, edited_gate, 'S', 'editgate')
-                except (IntegrityError, Http404):
-                    log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = [tram_code, 'E', u'Bramka nie została zmieniona']
-                else:
-                    log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = [tram_code, 'S', u'Bramka została zmieniona']
+            try:
+                gate.save()
+                for form in gate_formset:
+                    if form.cleaned_data != {}:
+                        a = form.save(commit=False)
+                        a.save()
+                generate_log(request.user, gate.pk, log_messages, gate, 'S', 'editgate')
+            except (IntegrityError, ValidationError):
+                log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'E', u'Bramka nie została zmieniona']
+            else:
+                log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'S', u'Bramka została zmieniona']
             return render(request, 'qapp/gate/results.html', {'log_messages': log_messages, })
-        else:
-            gate_form = GateChangeForm(request.POST)
-            gate_formset = GateFileAddFormSet(request.POST, request.FILES)
-            return render(request, 'qapp/gate/edit.html', {'gate_form': gate_form, 'gate_formset': gate_formset})
     else:
-        gate = get_object_or_404(Gate, tram__number=tram, car=car, area__area=area, operation_no=operation_no)
         gate_form = GateChangeForm(instance=gate, initial={'modify_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")})
-        gate_formset = GateFileAddFormSet(instance=gate)
-        return render(request, 'qapp/gate/edit.html', {'gate_form': gate_form, 'gate_formset': gate_formset})
+        gate_formset = GateFileChangeFormSet(instance=gate)
+    return render(request, 'qapp/gate/edit.html', {'gate_form': gate_form, 'gate_formset': gate_formset, 'fields_to_show': fields_to_show})
 
 
 def mass_update(request):
