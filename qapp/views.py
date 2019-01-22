@@ -72,6 +72,7 @@ class IndexView(generic.ListView):
     template_name = 'qapp/gate/list.html'
     context_object_name = 'gates'
     ordering = ['-tram', 'car']
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
@@ -88,13 +89,14 @@ class BjcView(generic.ListView):
     template_name = 'qapp/gate/list_bjc.html'
     context_object_name = 'bjc'
     ordering = ['-tram', 'car']
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super(BjcView, self).get_context_data(**kwargs)
         bjc_filter = GateFilter(self.request.GET, queryset=Gate.objects.all().filter(type='BJC').order_by('tram', 'car'))
         context['bjc_filter'] = bjc_filter
         if len(bjc_filter.qs) < len(context['bjc']):
-            context['gates'] = bjc_filter.qs
+            context['bjc'] = bjc_filter.qs
         return context
 
 
@@ -104,6 +106,7 @@ class BjwView(generic.ListView):
     template_name = 'qapp/gate/list_bjw.html'
     context_object_name = 'bjw'
     ordering = ['-bogie', 'bogie_type']
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super(BjwView, self).get_context_data(**kwargs)
@@ -120,6 +123,7 @@ class IksView(generic.ListView):
     template_name = 'qapp/gate/list_iks_ikk.html'
     context_object_name = 'iks'
     ordering = ['-tram', 'car']
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super(IksView, self).get_context_data(**kwargs)
@@ -136,6 +140,7 @@ class IkkView(generic.ListView):
     template_name = 'qapp/gate/list_iks_ikk.html'
     context_object_name = 'ikk'
     ordering = ['-tram', 'car']
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super(IkkView, self).get_context_data(**kwargs)
