@@ -1,7 +1,7 @@
 import django_filters
 from .models import Gate, Tram, OperationArea, Bogie
 from distutils.util import strtobool
-
+from django import forms
 
 class GateFilter(django_filters.FilterSet):
 
@@ -13,7 +13,7 @@ class GateFilter(django_filters.FilterSet):
     bogie_type = django_filters.MultipleChoiceFilter(choices=Gate.BOGIE_TYPES, label=u'Typ wózka')
     area_list = [(id, area) for id, area in OperationArea.objects.all().values_list('id', 'area')]
     area = django_filters.MultipleChoiceFilter(choices=area_list, label=u'Obszar')
-    operation_no = django_filters.CharFilter(label=u'Numer operacji')
+    operation_no = django_filters.CharFilter(label=u'Numer operacji', widget=forms.TextInput(attrs={'size': '16px'}))
     gate_status = django_filters.MultipleChoiceFilter(choices=Gate.GATE_STATUSES, label=u'Status')
     gate_rating = django_filters.MultipleChoiceFilter(choices=Gate.GATE_GRADES, label=u'Ocena')
 

@@ -1,4 +1,5 @@
 {% extends 'qapp/base.html' %}
+{% load user_tags %}
 
 {% block title %}QAPP - lista bramek{% endblock%}
 
@@ -21,7 +22,7 @@
                 <th>Nazwa</th>
                 <th>Status bramki</th>
                 <th>Ocena</th>
-                <th>Zaznacz</th>
+                <th class="center">Zaznacz</th>
             </tr>
             {% for gate in bjc %}
                 <tr class='clickable'>
@@ -32,7 +33,7 @@
                     <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.name }}</td>
                     <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.get_gate_status_display }}</td>
                     <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.get_gate_rating_display }}</td>
-                    <td onclick="#"><input type="checkbox" name="{{ gate.pk }}"></td>
+                    <td onclick="toggleCheckbox(this)" class="center"><input type="checkbox" name="{{ gate.pk }}"></td>
                 </tr>
             {% endfor %}
         </table>
@@ -44,13 +45,15 @@
             <br>
             <span class="page-links">
                 {% if page_obj.has_previous %}
-                    <a href="/qapp/bjc?page={{ page_obj.previous_page_number }}">poprzednia</a>
+                    <a href="/qapp/bjc?{% param_replace page=page_obj.previous_page_number %}">poprzednia</a>
+                {% else %}
+                    <a><font color="#CCC9C9">poprzednia</font></a>
                 {% endif %}
-                <span class="page-current">
-                      |  Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}  |
-                </span>
+                <span class="page-current">|  Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}  |</span>
                 {% if page_obj.has_next %}
-                    <a href="/qapp/bjc?page={{ page_obj.next_page_number }}">następna</a>
+                    <a href="/qapp/bjc?{% param_replace page=page_obj.next_page_number %}">następna</a>
+                {% else %}
+                    <a><font color="#CCC9C9">nastepna</font></a>
                 {% endif %}
             </span>
         </div>
@@ -75,7 +78,7 @@
         </table>
         <hr>
         <button type="submit">Filtruj</button>
-        <button onclick="location.href='{% url 'qapp:gate_list' %}'" type="button">Resetuj</button>
+        <button onclick="location.href='{% url 'qapp:bjc_list' %}'" type="button">Resetuj</button>
     </form>
     {% else %}
     Filtrowanie dostępne tylko dla zalogowanych użytkowników!
