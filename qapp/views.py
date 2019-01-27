@@ -15,6 +15,7 @@ import re
 from django.core.validators import ValidationError
 import os
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator
 
 
 def generate_log(curr_user, pk, log_dict, gate, category, action, *args):
@@ -91,12 +92,14 @@ class BjcView(generic.ListView):
     ordering = ['-tram', 'car']
     paginate_by = 20
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.bjc = GateFilter(self.request.GET, queryset=queryset)
+        return self.bjc.qs.distinct()
+
     def get_context_data(self, **kwargs):
         context = super(BjcView, self).get_context_data(**kwargs)
-        bjc_filter = GateFilter(self.request.GET, queryset=Gate.objects.all().filter(type='BJC').order_by('tram', 'car'))
-        context['bjc_filter'] = bjc_filter
-        if len(bjc_filter.qs) < len(context['bjc']):
-            context['bjc'] = bjc_filter.qs
+        context['bjc_filter'] = self.bjc
         return context
 
 

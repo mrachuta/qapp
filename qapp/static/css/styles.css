@@ -1,3 +1,5 @@
+/* General */
+
 * {
   box-sizing: border-box;
 }
@@ -11,6 +13,14 @@ body {
 select[multiple] {
     width: 145px;
 }
+
+/* Break long hyperlinks */
+
+a {
+	word-wrap: break-word;
+}
+
+/* End of general */
 
 /* Table */
 
@@ -36,6 +46,12 @@ select[multiple] {
     padding-left: 16px;
 }
 
+/* Class for centering content of last td and th in list of points */
+
+.wp-table .center {
+    text-align: center;
+    vertical-align: middle;
+}
 
 .wp-table td,
 .wp-table th {
@@ -58,7 +74,10 @@ select[multiple] {
     display: table;
 }
 
+/* End of Table */
+
 /* Header/Blog Title */
+
 .header {
   padding: 30px;
   text-align: center;
