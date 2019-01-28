@@ -12,7 +12,7 @@
         <h1>QAPP</h1>
     </div>
     <div class="navbar">
-        <a class="leftlink" href="{% url 'qapp:gate_list' %}">Strona główna</a>
+        <a class="leftlink" href="{% url 'qapp:index' %}">Strona główna</a>
         <a class="leftlink" href="{% url 'qapp:bjc_list' %}">BJ Człony</a>
         <a class="leftlink" href="{% url 'qapp:bjw_list' %}">BJ Wózki</a>
         <a class="leftlink" href="{% url 'qapp:iks_list' %}">IK Solaris</a>
@@ -26,11 +26,11 @@
             <div class="dropdown">
                 <button class="dropbtn">{{ request.user.first_name }} {{request.user.last_name}} ({{ request.user.username }})</button>
                 <div class="dropdown-content">
-                  <a href="{% url 'logout' %}?next={% url 'qapp:gate_list' %}">Wyloguj</a>
+                  <a href="{% url 'logout' %}?next={% url 'qapp:index' %}">Wyloguj</a>
                 </div>
           </div>
         {% else %}
-            <a href="{% url 'login' %}?next={% url 'qapp:gate_list' %}" style="float:right">Zaloguj</a>
+            <a href="{% url 'login' %}?next={% url 'qapp:index' %}" style="float:right">Zaloguj</a>
         {% endif %}
     </div>
     <div class="row">
