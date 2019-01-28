@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     #path('', views.index, name='index'),
-    url(r'^$', views.IndexView.as_view(), name='gate_list'),
+    url(r'^$', views.index, name='index'),
     url(r'^bjc$', views.BjcView.as_view(), name='bjc_list'),
     url(r'^bjw$', views.BjwView.as_view(), name='bjw_list'),
     url(r'^iks$', views.IksView.as_view(), name='iks_list'),

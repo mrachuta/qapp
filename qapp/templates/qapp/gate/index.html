@@ -1,0 +1,19 @@
+{% extends 'qapp/base.html' %}
+
+{% block title %}QAPP - strona główna{% endblock%}
+
+{% block content %}
+    <div class="card" id="index">
+        <h1 align="center">{{ test }}</h1>
+    </div>
+{% endblock %}
+
+{% block firstcard %}
+    <h3>Pierwsze menu</h3>
+    <hr>
+    {% if user.is_authenticated %}
+        Jakaś treść
+    {% else %}
+        Treść dostępna tylko dla zalogowanych użytkowników!
+    {% endif %}
+{% endblock %}

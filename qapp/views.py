@@ -67,21 +67,9 @@ def change_status(gate, value):
     gate.save()
 
 
-class IndexView(generic.ListView):
-
-    queryset = Gate.objects.filter(type='BJC')
-    template_name = 'qapp/gate/list.html'
-    context_object_name = 'gates'
-    ordering = ['-tram', 'car']
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        gates_filter = GateFilter(self.request.GET, queryset=Gate.objects.all().filter(type='BJC').order_by('tram', 'car'))
-        context['gates_filter'] = gates_filter
-        if len(gates_filter.qs) < len(context['gates']):
-            context['gates'] = gates_filter.qs
-        return context
+def index(request):
+    test = 'Wielki test na index!'
+    return render(request, 'qapp/gate/index.html', {'test': test})
 
 
 class BjcView(generic.ListView):
@@ -258,10 +246,6 @@ def gate_update(request, pk):
                       )
 
 
-"""
-def results(request):
-    return render(request, 'qapp/gate/list.html')
-"""
 
 
 class LogView(generic.DetailView):

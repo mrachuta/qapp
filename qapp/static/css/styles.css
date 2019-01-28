@@ -66,7 +66,7 @@ a {
 }
 
 .wp-table {
-    font-size: 13px!important;
+    font-size: 15px!important;
     border: 1px solid #ccc;
     border-collapse: collapse;
     border-spacing: 0;
@@ -205,6 +205,7 @@ a {
 .leftcolumn {
   float: left;
   width: 75%;
+  padding-right: 20px;
 }
 
 /* Right column */
