@@ -139,9 +139,9 @@
     <ul>
         <li><a href="{{ request.META.HTTP_REFERER }}">Wróć do poprzedniego widoku</a></li>
         {% if gate.type == 'BJW' %}
-            <li><a href="{% url 'qapp:gate_list' %}{{ gate.type|lower }}?bogie={{ gate.bogie.pk }}&bogie_type={{ gate.bogie_type }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na wózku {{ gate.bogie }} typ {{ gate.bogie_type }}</a></li>
+            <li><a href="{% url 'qapp:bjw_list' %}?bogie={{ gate.bogie.pk }}&bogie_type={{ gate.bogie_type }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na wózku {{ gate.bogie }} typ {{ gate.bogie_type }}</a></li>
         {% else %}
-            <li><a href="{% url 'qapp:gate_list' %}{{ gate.type|lower }}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
+            <li><a href="{% url 'qapp:bjc_list' %}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
         {% endif %}
         <li><a href="{% url 'qapp:log' gate.pk %}" target="_blank">Zobacz log</a></li>
         {% if request.user|dzj_member %}
