@@ -1,4 +1,5 @@
 {% extends 'qapp/base.html' %}
+{% load user_tags %}
 
 {% block title %}QAPP - moje bramki{% endblock%}
 
@@ -16,23 +17,70 @@
             <th>Nazwa</th>
             <th>Autor</th>
             <th>Odpowiedzialny</th>
+            <th>Status</th>
+            <th>Ocena</th>
             <th>Edytuj</th>
         </tr>
-        {% for gate in gates %}
-            <tr>
-                <td>{{ gate.type }}</td>
-                <td>{{ gate.tram|default_if_none:"-----" }}</td>
-                <td>{{ gate.car|default_if_none:"-----" }}</td>
-                <td>{{ gate.bogie|default_if_none:"-----" }}</td>
-                <td>{{ gate.bogie_type|default_if_none:"-----" }}</td>
-                <td>{{ gate.area }}</td>
-                <td>{{ gate.operation_no|default_if_none:"-----" }}</td>
-                <td>{{ gate.name }}</td>
-                <td>{{ gate.author }}</td>
-                <td>{{ gate.area.responsible }}</td>
-                <td><a href="{{ gate.get_absolute_url }}">KLIK</a></td>
-            </tr>
+        {% for gate in user_gates %}
+        <tr>
+            <td>{{ gate.type }}</td>
+            <td>{{ gate.tram|default_if_none:"-----" }}</td>
+            <td>{{ gate.car|default_if_none:"-----" }}</td>
+            <td>{{ gate.bogie|default_if_none:"-----" }}</td>
+            <td>{{ gate.bogie_type|default_if_none:"-----" }}</td>
+            <td>{{ gate.area }}</td>
+            <td>{{ gate.operation_no|default_if_none:"-----" }}</td>
+            <td>{{ gate.name }}</td>
+            <td>{{ gate.author }}</td>
+            <td>{{ gate.area.responsible }}</td>
+            <td>{{ gate.get_gate_status_display }}</td>
+            <td>{{ gate.get_gate_rating_display|default:"-----" }}</td>
+            <td><a href="{{ gate.get_absolute_url }}">KLIK</a></td>
+        </tr>
         {% endfor %}
     </table>
+    {% if is_paginated %}
+    <div class="pagination" align="center">
+        <br>
+        <span class="page-links">
+            {% if page_obj.has_previous %}
+            <a href="/qapp/mygates?{% param_replace page=page_obj.previous_page_number %}">poprzednia</a>
+            {% else %}
+            <a><font color="#CCC9C9">poprzednia</font></a>
+            {% endif %}
+            <span class="page-current">|  Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}  |</span>
+            {% if page_obj.has_next %}
+            <a href="/qapp/mygates?{% param_replace page=page_obj.next_page_number %}">następna</a>
+            {% else %}
+            <a><font color="#CCC9C9">nastepna</font></a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+
+{% block firstcard %}
+<h3>Filtrowanie</h3>
+<hr>
+{% if user.is_authenticated %}
+<form method="get">
+    <table>
+        {% for field in user_gates_filter.form %}
+        {% if not 'area' in field.name %}
+        <tr>
+            <td>{{ field.label_tag}}</td>
+            <td>{{ field }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    <hr>
+    <button type="submit">Filtruj</button>
+    <button onclick="location.href='{% url 'qapp:my_gates' %}'" type="button">Resetuj</button>
+</form>
+{% else %}
+Filtrowanie dostępne tylko dla zalogowanych użytkowników!
+{% endif %}
 {% endblock %}

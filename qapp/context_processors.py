@@ -9,3 +9,15 @@ def get_most_rejected(request):
     return {
         'topfive': topfive
     }
+
+
+def get_latest_count(request):
+
+    if request.user.groups.filter(name='dzj').exists():
+        user_gates_count = Gate.objects.all().filter(author=request.user, gate_status='O').order_by('tram').count()
+    else:
+        user_gates_count = Gate.objects.all().filter(area__responsible=request.user, gate_status='P').order_by('tram').count()
+
+    return {
+        'user_gates_count': user_gates_count
+    }

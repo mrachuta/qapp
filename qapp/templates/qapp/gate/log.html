@@ -3,16 +3,16 @@
 {% block title %}QAPP - {{ gate.name }} - log{% endblock %}
 
 {% block content %}
-<div class="card" id="gate_{{ gate.id}}_log">
+<div class="card" id="gate_{{ gate.id }}_log">
     LOG:
     <br>
     <br>
     {% for log in gate.log_set.all reversed %}
-        {% if log.category == 'E' %}
-            <p><font color="red">{{ log.date_time|date:"Y-m-d H:i:s.u" }}: użytkownik <b>{{ log.author }}</b> wykonał akcję <b>{{ log.action }} (BŁĄD)</b></font></p>
-        {% else %}
-            <p>{{ log.date_time|date:"Y-m-d H:i:s.u" }}: użytkownik <b>{{ log.author }}</b> wykonał akcję <b>{{ log.action }}</b></p>
-        {% endif %}
+    {% if log.category == 'E' %}
+    <p><font color="red">{{ log.date_time|date:"Y-m-d H:i:s.u" }}: użytkownik <b>{{ log.author }}</b> wykonał akcję <b>{{ log.action }} (BŁĄD)</b></font></p>
+    {% else %}
+    <p>{{ log.date_time|date:"Y-m-d H:i:s.u" }}: użytkownik <b>{{ log.author }}</b> wykonał akcję <b>{{ log.action }}</b></p>
+    {% endif %}
     {% endfor %}
 </div>
 {% endblock %}
