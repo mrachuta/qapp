@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'qapp.context_processors.get_most_rejected',
+                'qapp.context_processors.get_latest_count',
             ],
         },
     },

@@ -8,10 +8,10 @@
     <form method="POST" class="post-form" enctype="multipart/form-data">
         {%csrf_token%}
         {% for error in gate_form.non_field_errors %}
-            <font color="red">Błąd: {{ error }}</font><br><br>
+        <font color="red">Błąd: {{ error }}</font><br><br>
         {% endfor %}
         {% for error in gate_formset.non_field_errors %}
-            <font color="red">Błąd: {{ error }}</font><br><br>
+        <font color="red">Błąd: {{ error }}</font><br><br>
         {% endfor %}
          <table class="wp-table">
             <tr>
@@ -19,38 +19,38 @@
                 <th>Wartość</th>
             </tr>
             {% for field in gate_form %}
-                {% if field.name in fields_to_show %}
-                    <tr>
-                        <td>{{ field.label_tag }}</td>
-                        <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
-                    </tr>
-                {% else %}
-                    {% with field.name as fieldn %}
-                        <tr>
-                            <td>{{ field.label_tag }}</td>
-                            <td>
-                                {% if field.errors %}
-                                    <font color="red">{{ field.errors }}</font>
-                                {% endif %}
-                                {{ field }}
-                                {% if field.name == 'creation_date' %}
-                                    {{ gate_form.instance|get_obj_attr:fieldn|date:"Y-m-d H:i:s.u" }}
-                                {% else %}
-                                    {{ gate_form.instance|get_obj_attr:fieldn|default_if_none:"-" }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endwith %}
-                {% endif %}
+            {% if field.name in fields_to_show %}
+                <tr>
+                    <td>{{ field.label_tag }}</td>
+                    <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+                </tr>
+            {% else %}
+            {% with field.name as fieldn %}
+                <tr>
+                    <td>{{ field.label_tag }}</td>
+                    <td>
+                        {% if field.errors %}
+                        <font color="red">{{ field.errors }}</font>
+                        {% endif %}
+                        {{ field }}
+                        {% if field.name == 'creation_date' %}
+                        {{ gate_form.instance|get_obj_attr:fieldn|date:"Y-m-d H:i:s.u" }}
+                        {% else %}
+                        {{ gate_form.instance|get_obj_attr:fieldn|default_if_none:"-" }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endwith %}
+            {% endif %}
             {% endfor %}
             {{ gate_formset.management_form }}
             {% for form in gate_formset %}
-                {% for field in form.visible_fields %}
-                <tr>
-                    <td>{{ field.label_tag }}</td>
-                    <td>{% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
-                </tr>
-                {% endfor %}
+            {% for field in form.visible_fields %}
+            <tr>
+                <td>{{ field.label_tag }}</td>
+                <td>{% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+            </tr>
+            {% endfor %}
             {% endfor %}
         </table>
         <br>

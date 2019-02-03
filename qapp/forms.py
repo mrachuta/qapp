@@ -131,7 +131,11 @@ class GateAddForm(forms.ModelForm):
         for requirement in requirements_integrity:
             for key, value in requirement.items():
                 if key == self.cleaned_data['type']:
-                    if not none_test(self.cleaned_data['tram'][0], value['conditions'][0]) \
+                    try:
+                        tram = self.cleaned_data['tram'][0]
+                    except IndexError:
+                        tram = None
+                    if not none_test(tram, value['conditions'][0]) \
                             or not none_test(self.cleaned_data['car'], value['conditions'][1]) \
                             or not none_test(self.cleaned_data['bogie'], value['conditions'][2]) \
                             or not none_test(self.cleaned_data['bogie_type'], value['conditions'][3]):
@@ -185,6 +189,7 @@ class GateAddForm(forms.ModelForm):
             raise ValidationError([err_list])
 
         print('test4')
+
         return self.cleaned_data
 
     def __init__(self, *args, **kwargs):

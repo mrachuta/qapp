@@ -2,9 +2,26 @@
 {% load user_tags %}
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
     {% load static %}
-        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'favicon/apple-icon-57x57.png' %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'favicon/apple-icon-60x60.png' %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'favicon/apple-icon-72x72.png' %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'favicon/apple-icon-76x76.png' %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'favicon/apple-icon-114x114.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'favicon/apple-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'favicon/apple-icon-144x144.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'favicon/apple-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-icon-180x180.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'favicon/android-icon-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon/favicon-96x96.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicon/manifest.json' %}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{% static 'favicon/ms-icon-144x144.png' %}">
+    <meta name="theme-color" content="#ffffff">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
@@ -18,19 +35,23 @@
         <a class="leftlink" href="{% url 'qapp:iks_list' %}">IK Solaris</a>
         <a class="leftlink" href="{% url 'qapp:ikk_list' %}">IK Klient</a>
         {% if request.user.is_authenticated %}
-            {% if request.user|dzj_member %}
-                <a class="leftlink" href="{% url 'qapp:gate_add' %}">Dodaj bramkę</a>
-                <!-- <a href="% url 'qapp:edit' %">Edytuj bramkę</a> -->
-            {% endif %}
-            <a class="leftlink" href="{% url 'qapp:my_gates' %}">Moje bramki</a>
-            <div class="dropdown">
-                <button class="dropbtn">{{ request.user.first_name }} {{request.user.last_name}} ({{ request.user.username }})</button>
-                <div class="dropdown-content">
-                  <a href="{% url 'logout' %}?next={% url 'qapp:index' %}">Wyloguj</a>
-                </div>
-          </div>
+        {% if request.user|dzj_member %}
+        <a class="leftlink" href="{% url 'qapp:gate_add' %}">Dodaj bramkę</a>
+        {% endif %}
+        <a class="leftlink" href="{% url 'qapp:my_gates' %}">Moje bramki</a>
+        <div class="dropdown">
+            <button class="dropbtn">{{ request.user.first_name }} {{ request.user.last_name }} ({{ request.user.username }})</button>
+            <div class="dropdown-content">
+                {% if request.user|dzj_member %}
+                <a href="{% url 'qapp:my_gates' %}?&gate_status=O">Do oceny: {{ user_gates_count }}</a>
+                {% else %}
+                <a href="{% url 'qapp:my_gates' %}?&gate_status=P">Do poprawki: {{ user_gates_count }}</a>
+                {% endif %}
+                <a href="{% url 'logout' %}?next={% url 'qapp:index' %}">Wyloguj</a>
+            </div>
+        </div>
         {% else %}
-            <a href="{% url 'login' %}?next={% url 'qapp:index' %}" style="float:right">Zaloguj</a>
+        <a href="{% url 'login' %}?next={% url 'qapp:index' %}" style="float:right">Zaloguj</a>
         {% endif %}
     </div>
     <div class="row">
@@ -39,17 +60,17 @@
             {% endblock %}
         </div>
         <div class="rightcolumn">
-            <div class="card" id="firstcard">
+            <div class="card" id="first_card">
                 {% block firstcard %}
                 {% endblock %}
             </div>
-            <div class="card" id="secondcard">
+            <div class="card" id="second_card">
                 <h3>Najwięcej odrzuceń</h3>
                 <hr>
                 <ol>
-                {% for gate in topfive %}
+                    {% for gate in topfive %}
                     <li><a href="{{ gate.get_absolute_url}}">{{ gate.name }}<br>(ilość odrzuceń: {{ gate.reject_counter }})</a></li>
-                {% endfor %}
+                    {% endfor %}
                 </ol>
             </div>
         </div>
@@ -57,8 +78,7 @@
     <div class="footer">
         <img src="{% static 'img/python_powered.png' %}"><img src="{% static 'img/and_ed.png' %}"><img src="{% static 'img/django_powered.png' %}">
     </div>
-    <div id="divcanvas" style="display: none;">
-    </div>
+    <div id="divcanvas" style="display: none;"></div>
     <script src="https://cdn.jsdelivr.net/npm/screw-filereader@1.4.3/index.min.js"></script>
     <script>
     function toggleCheckbox(element) {

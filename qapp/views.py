@@ -68,8 +68,30 @@ def change_status(gate, value):
 
 
 def index(request):
-    test = 'Wielki test na index!'
-    return render(request, 'qapp/gate/index.html', {'test': test})
+    return render(request, 'qapp/gate/index.html', )
+
+
+class GateListView(generic.ListView):
+
+    queryset = None
+    gate_type = None
+    template_name = 'qapp/gate/list.html'
+    context_object_name = 'gate_list'
+    ordering = ['-tram', 'car', '-bogie', 'bogie_type']
+    paginate_by = 20
+
+    def get_queryset(self):
+        print(self.gate_type)
+        queryset = Gate.objects.filter(type=self.gate_type.upper())
+        print(queryset.count())
+        self.gate_list = GateFilter(self.request.GET, queryset=queryset)
+        return self.gate_list.qs.distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super(GateListView, self).get_context_data(**kwargs)
+        context['gate_type'] = self.gate_type
+        context['gate_list_filter'] = self.gate_list
+        return context
 
 
 class BjcView(generic.ListView):
@@ -90,89 +112,6 @@ class BjcView(generic.ListView):
         context['bjc_filter'] = self.bjc
         return context
 
-
-class BjwView(generic.ListView):
-
-    queryset = Gate.objects.filter(type='BJW')
-    template_name = 'qapp/gate/list_bjw.html'
-    context_object_name = 'bjw'
-    ordering = ['-bogie', 'bogie_type']
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super(BjwView, self).get_context_data(**kwargs)
-        bjw_filter = GateFilter(self.request.GET, queryset=Gate.objects.all().filter(type='BJW').order_by('bogie', 'bogie_type'))
-        context['bjw_filter'] = bjw_filter
-        if len(bjw_filter.qs) < len(context['bjw']):
-            context['bjw'] = bjw_filter.qs
-        return context
-
-
-class IksView(generic.ListView):
-
-    queryset = Gate.objects.filter(type='IKS')
-    template_name = 'qapp/gate/list_iks_ikk.html'
-    context_object_name = 'iks'
-    ordering = ['-tram', 'car']
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super(IksView, self).get_context_data(**kwargs)
-        iks_filter = GateFilter(self.request.GET,
-                                queryset=Gate.objects.all().filter(type='IKS').order_by('tram', 'car'))
-        context['iks_filter'] = iks_filter
-        if len(iks_filter.qs) < len(context['iks']):
-            context['iks'] = iks_filter.qs
-        return context
-
-
-class IkkView(generic.ListView):
-    queryset = Gate.objects.filter(type='IKK')
-    template_name = 'qapp/gate/list_iks_ikk.html'
-    context_object_name = 'ikk'
-    ordering = ['-tram', 'car']
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super(IkkView, self).get_context_data(**kwargs)
-        ikk_filter = GateFilter(self.request.GET,
-                                queryset=Gate.objects.all().filter(type='IKK').order_by('tram', 'car'))
-        context['ikk_filter'] = ikk_filter
-        if len(ikk_filter.qs) < len(context['ikk']):
-            context['ikk'] = ikk_filter.qs
-        return context
-
-"""
-class BjwDetailView(generic.DetailView):
-
-    model = Gate
-    template_name = 'qapp/gate/details.html'
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(Gate,
-                                 bogie__number=self.kwargs['bogie'],
-                                 car=self.kwargs['car'],
-                                 area__area=self.kwargs['area'],
-                                 operation_no=self.kwargs['operation_no']
-                                 )
-
-    def get_context_data(self, **kwargs):
-        context = super(BjwDetailView, self).get_context_data(**kwargs)
-        context['comment_form'] = CommentAddForm(None)
-        context['comment_formset'] = CommentFileAddFormSet(None)
-        return context
-
-"""
-"""
-
-def gate_details(request, tram, car, area, operation_no):
-
-    gate = get_object_or_404(Gate, tram__number=tram, car=car, area__area=area, operation_no=operation_no)
-
-    return render(request, 'qapp/gate/details.html',
-                  {'gate': gate},
-                  )
-"""
 
 class DetailView(generic.DetailView):
 
@@ -246,8 +185,6 @@ def gate_update(request, pk):
                       )
 
 
-
-
 class LogView(generic.DetailView):
 
     model = Gate
@@ -268,11 +205,10 @@ def gate_add(request):
         if gate_form.is_valid() and gate_formset.is_valid():
             print('cleaned_data')
             print(gate_form.cleaned_data)
-            for tram in gate_form.cleaned_data['tram']:
+            if gate_form.cleaned_data['bogie']:
                 try:
                     gate = gate_form.save(commit=False)
                     gate.id = None
-                    gate.tram = tram
                     gate.modify_date = None
                     gate.save()
                     for form in gate_formset:
@@ -286,14 +222,34 @@ def gate_add(request):
                     log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'E', u'Bramka nie została dodana']
                 else:
                     log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'S', u'Bramka została dodana']
+                    print('Final')
+            else:
+                for tram in gate_form.cleaned_data['tram']:
+                    try:
+                        gate = gate_form.save(commit=False)
+                        gate.id = None
+                        gate.tram = tram
+                        gate.modify_date = None
+                        gate.save()
+                        for form in gate_formset:
+                            if form.cleaned_data != {}:
+                                a = form.save(commit=False)
+                                a.id = None
+                                a.file_rel_gate = gate
+                                a.save()
+                        generate_log(request.user, gate.pk, log_messages, gate, 'S', 'newgate')
+                    except (IntegrityError, ValidationError):
+                        log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'E', u'Bramka nie została dodana']
+                    else:
+                        log_messages[datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")] = ['', 'S', u'Bramka została dodana']
             if 'save_add_another' in request.POST:
 
                 init_params = {
                     'type': request.POST['type'],
-                    'tram': request.POST['tram'],
-                    'car': request.POST['car'],
-                    'bogie': request.POST['bogie'],
-                    'bogie_type': request.POST['bogie_type'],
+                    'tram': request.POST.get('tram', ''),
+                    'car': request.POST.get('car', ''),
+                    'bogie': request.POST.get('bogie', ''),
+                    'bogie_type': request.POST.get('bogie_type', ''),
                     'area': request.POST['area'],
                     'creation_date': datetime.now(),
                     'author': request.POST['author']
@@ -337,45 +293,20 @@ def gate_add(request):
 class MyGates(generic.ListView):
 
     template_name = 'qapp/gate/mygates.html'
-    context_object_name = 'gates'
+    context_object_name = 'user_gates'
+    paginate_by = 20
 
     def get_queryset(self):
         if self.request.user.groups.filter(name='dzj').exists():
-            return Gate.objects.all().filter(author=self.request.user)
+            self.user_gates = GateFilter(self.request.GET, queryset=Gate.objects.all().filter(author=self.request.user).order_by('gate_rating', 'tram'))
         else:
-            return Gate.objects.all().filter(area__responsible=self.request.user)
+            self.user_gates = GateFilter(self.request.GET, queryset=Gate.objects.all().filter(area__responsible=self.request.user).order_by('gate_rating', 'tram'))
+        return self.user_gates.qs.distinct()
 
-
-"""
-class EditGate(generic.UpdateView):
-
-    form_class = GateChangeForm
-    success_url = "/"
-    template_name = "qapp/gate/edit2.html"
-    initial = {'modify_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")}
-
-    def get_object(self, queryset=None):
-        obj = Gate.objects.get(tram__number=self.kwargs['tram'], car=self.kwargs['car'], area__area=self.kwargs['area'], operation_no=self.kwargs['operation_no'])
-        return obj
-
-    def form_valid(self, form):
-        trams_to_apply = form.cleaned_data['trams_to_apply']
-        print(trams_to_apply)
-        for tram in trams_to_apply:
-            print('Zmieniam dla {}'.format(tram))
-            gate = form.save(commit=False)
-            gate.tram = tram
-            gate.modify_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-            gate.save()
-        return render(self.request, 'qapp/gate/results.html',
-                          {
-                              #'log_messages': log_messages,
-                          }
-                          )
-
-
-
-"""
+    def get_context_data(self, **kwargs):
+        context = super(MyGates, self).get_context_data(**kwargs)
+        context['user_gates_filter'] = self.user_gates
+        return context
 
 
 def gate_edit(request, pk):
@@ -414,14 +345,6 @@ def mass_update(request):
         print(request.POST)
         for key, value in request.POST.items():
             if key != 'csrfmiddlewaretoken' and key != 'new_rating':
-                """
-                tram_data = regex_pattern.search(key).groups()
-                tram = tram_data[0]
-                car = tram_data[1]
-                area = tram_data[2]
-                operation_no = tram_data[3]
-                tram_code = ''.join([tram, car, operation_no])
-                """
                 gate = get_object_or_404(Gate, pk=key)
                 if gate.gate_status == 'O':
                     change_rating(gate, request.POST['new_rating'])

@@ -14,9 +14,15 @@
         </div>
     {% endif %}
         <table class="wp-table">
+
             <tr>
+                {% if 'bjw' in gate_type %}
+                <th>Wózek</th>
+                <th>Typ wózka</th>
+                {% else %}
                 <th>Tramwaj</th>
                 <th>Człon</th>
+                {% endif %}
                 <th>Obszar</th>
                 <th>Numer operacji</th>
                 <th>Nazwa</th>
@@ -24,10 +30,15 @@
                 <th>Ocena</th>
                 <th class="center">Zaznacz</th>
             </tr>
-            {% for gate in bjc %}
+            {% for gate in gate_list %}
             <tr class="clickable" id="gate_{{ gate.id }}">
+                {% if 'bjw' in gate_type %}
+                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.bogie }}</td>
+                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.bogie_type }}</td>
+                {% else %}
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.tram }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.car }}</td>
+                {% endif %}
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.area }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.operation_no }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.name }}</td>
@@ -45,13 +56,13 @@
         <br>
         <span class="page-links">
             {% if page_obj.has_previous %}
-            <a href="/qapp/bjc?{% param_replace page=page_obj.previous_page_number %}">poprzednia</a>
+            <a href="/qapp/{{ gate_type }}?{% param_replace page=page_obj.previous_page_number %}">poprzednia</a>
             {% else %}
             <a><font color="#CCC9C9">poprzednia</font></a>
             {% endif %}
             <span class="page-current">|  Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}  |</span>
             {% if page_obj.has_next %}
-            <a href="/qapp/bjc?{% param_replace page=page_obj.next_page_number %}">następna</a>
+            <a href="/qapp/{{ gate_type }}?{% param_replace page=page_obj.next_page_number %}">następna</a>
             {% else %}
             <a><font color="#CCC9C9">nastepna</font></a>
             {% endif %}
@@ -67,18 +78,25 @@
 {% if user.is_authenticated %}
 <form method="get">
     <table>
-        {% for field in bjc_filter.form %}
         <tr>
+        {% for field in gate_list_filter.form %}
+        {% if 'bjw' in gate_type %}
+        {% if 'tram' not in field.name and 'car' not in field.name %}
+            <td>{{ field.label_tag}}</td>
+            <td>{{ field }}</td>
+        {% endif %}
+        {% else %}
         {% if 'bogie' not in field.name %}
             <td>{{ field.label_tag}}</td>
             <td>{{ field }}</td>
+        {% endif %}
         {% endif %}
         </tr>
         {% endfor %}
     </table>
     <hr>
     <button type="submit">Filtruj</button>
-    <button onclick="location.href='{% url 'qapp:bjc_list' %}'" type="button">Resetuj</button>
+    <button onclick="location.href='{{ request.path }}'" type="button">Resetuj</button>
 </form>
 {% else %}
 Filtrowanie dostępne tylko dla zalogowanych użytkowników!

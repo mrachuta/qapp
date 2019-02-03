@@ -42,10 +42,10 @@
             <td>{{ gate.area.responsible.first_name }} {{ gate.area.responsible.last_name }} ({{ gate.area.responsible }})</td>
         </tr>
         {% if gate_type == 'BJW' or gate_type == 'BJC' %}
-            <tr>
-                <td>Numer operacji:</td>
-                <td>{{ gate.operation_no }}</td>
-            </tr>
+        <tr>
+            <td>Numer operacji:</td>
+            <td>{{ gate.operation_no }}</td>
+        </tr>
         {% endif %}
         <tr>
             <td>Nazwa:</td>
@@ -64,13 +64,13 @@
             <td>Dodatkowe pliki:</td>
             <td>
                 {% if gate.gatefile_set.all %}
-                    {% for document in gate.gatefile_set.all %}
-                        <div class="file">
-                            <a class="filelink" href="{{ document.file.url }}" target="_blank">{{ document.filename }}</a><br>
-                        </div>
-                    {% endfor %}
+                {% for document in gate.gatefile_set.all %}
+                <div class="file">
+                    <a class="filelink" href="{{ document.file.url }}" target="_blank">{{ document.filename }}</a><br>
+                </div>
+                {% endfor %}
                 {% else %}
-                    Brak dodatkowych plików
+                Brak dodatkowych plików
                 {% endif %}
             </td>
         </tr>
@@ -93,65 +93,63 @@
     <form action="{% url 'qapp:update' gate.pk %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% if request.user|dzj_member or request.user == gate.area.responsible %}
-            {% for field in comment_form %}
-                {{ field.label_tag }}
-                    <br>
-                    {% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
-                    <br>
-            {% endfor %}
-            {{ comment_formset.management_form }}
-            Dodaj opcjonalne pliki:
-            <br>
-            {% for form in comment_formset %}
-                {% for field in form.visible_fields %}
-                    {% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font><br>
-                {% endfor %}
-            {% endfor %}
-            {% if gate.gate_status == 'R' or gate.gate_status == 'P' %}
-                <button name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
-            {% endif %}
+        {% for field in comment_form %}
+        {{ field.label_tag }}
+        <br>
+        {% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
+        <br>
+        {% endfor %}
+        {{ comment_formset.management_form }}
+        Dodaj opcjonalne pliki:
+        <br>
+        {% for form in comment_formset %}
+        {% for field in form.visible_fields %}
+        {% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
+        <br>
+        {% endfor %}
+        {% endfor %}
+        {% if gate.gate_status == 'R' or gate.gate_status == 'P' %}
+        <button name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
+        {% endif %}
         {% endif %}
         {% if request.user|dzj_member and gate.gate_status == 'O' %}
-            <div class="fastaction">
-                <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
-                <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
-            </div>
-            <button name="new_rating" type="submit" value="OK">Akceptuj</button>
-            <button name="new_rating" type="submit" value="NOK">Odrzuć</button>
+        <div class="fastaction">
+            <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
+            <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
+        </div>
+        <button name="new_rating" type="submit" value="OK">Akceptuj</button>
+        <button name="new_rating" type="submit" value="NOK">Odrzuć</button>
         {% endif %}
     </form>
 </div>
-<div class="card" id="gate_{{ gate.id}}_comments">
-    {% for comment in gate.comment_set.all reversed %}
-        <p>Autor: {{ comment.author.first_name }} {{ comment.author.last_name}} ({{ comment.author }}) <i>(id komentarza: #{{ comment.id }})</i></p>
-        <p>Treść: {{ comment.text }}</p>
-            {% for document in comment.commentfile_set.all %}
-                <p>Plik: <a href="{{ document.file.url }}" target="_blank">{{ document.filename }}</a></p>
-            {% endfor %}
-        <p>Data: {{ comment.date_time|date:"Y-d-m, H:i:s" }}</p>
+{% for comment in gate.comment_set.all reversed %}
+<div class="card" id="gate_{{ gate.id}}_comment_{{ comment.id }}">
+    <p><b>Autor: </b>{{ comment.author.first_name }} {{ comment.author.last_name}} ({{ comment.author }}), {{ comment.date_time|date:"Y-d-m, H:i:s" }}</p>
+    <p><b>Treść: </b>{{ comment.text }}</p>
+    {% for document in comment.commentfile_set.all %}
+    <p><b>Plik: </b><a href="{{ document.file.url }}" target="_blank">{{ document.filename }}</a></p>
     {% endfor %}
+    <p><i><font color="#dddddd">Id komentarza: {{ comment.id }}</font></i></p>
 </div>
+{% endfor %}
 {% endblock %}
 
 {% block firstcard %}
-    <h3>Szybkie akcje:</h3>
-    <hr>
-    <ul>
-        <li><a href="{{ request.META.HTTP_REFERER }}">Wróć do poprzedniego widoku</a></li>
-        {% if gate.type == 'BJW' %}
-            <li><a href="{% url 'qapp:bjw_list' %}?bogie={{ gate.bogie.pk }}&bogie_type={{ gate.bogie_type }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na wózku {{ gate.bogie }} typ {{ gate.bogie_type }}</a></li>
-        {% else %}
-            <li><a href="{% url 'qapp:bjc_list' %}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
-        {% endif %}
-        <li><a href="{% url 'qapp:log' gate.pk %}" target="_blank">Zobacz log</a></li>
-        {% if request.user|dzj_member %}
-        <li><a href="{% url 'qapp:edit' gate.pk %}">Edytuj</a></li>
-        {% endif %}
-        <li><a href="#">Skontaktuj się z autorem: {{ gate.author }}</a></li>
-    </ul>
-
-
-
+<h3>Szybkie akcje:</h3>
+<hr>
+<ul>
+    <li><a href="{{ request.META.HTTP_REFERER }}">Wróć do poprzedniego widoku</a></li>
+    {% if gate.type == 'BJW' %}
+    <li><a href="{% url 'qapp:bjw_list' %}?bogie={{ gate.bogie.pk }}&bogie_type={{ gate.bogie_type }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na wózku {{ gate.bogie }} typ {{ gate.bogie_type }}</a></li>
+    {% else %}
+    <li><a href="{% url 'qapp:bjc_list' %}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
+    {% endif %}
+    <li><a href="{% url 'qapp:log' gate.pk %}" target="_blank">Zobacz log</a></li>
+    {% if request.user|dzj_member %}
+    <li><a href="{% url 'qapp:edit' gate.pk %}">Edytuj</a></li>
+    {% endif %}
+    <li><a href="#">Skontaktuj się z autorem: {{ gate.author }}</a></li>
+</ul>
 {% endblock %}
 
 

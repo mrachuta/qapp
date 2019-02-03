@@ -7,17 +7,17 @@
     <form method="POST" class="post-form" enctype="multipart/form-data">
         {%csrf_token%}
         {% if log_messages %}
-            <p>Rezultaty zmian:</p>
-            {% for time, info in log_messages.items %}
-                {% if info.1 == 'E' %}
-                    <p><font color="red">{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</font></p>
-                {% else %}
-                    <p>{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</p>
-                {% endif %}
-            {% endfor %}
+        <p>Rezultaty zmian:</p>
+        {% for time, info in log_messages.items %}
+        {% if info.1 == 'E' %}
+        <p><font color="red">{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</font></p>
+        {% else %}
+        <p>{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</p>
+        {% endif %}
+        {% endfor %}
         {% endif %}
         {% for error in gate_form.non_field_errors %}
-            <font color="red">Błąd: {{ error }}</font><br><br>
+        <font color="red">Błąd: {{ error }}</font><br><br>
         {% endfor %}
         <table class="wp-table">
             <tr>
@@ -25,26 +25,26 @@
                 <th>Wartość</th>
             </tr>
             {% for field in gate_form %}
-                {% if field.name != 'author' %}
-                    <tr>
-                        <td>{{ field.label_tag }}</td>
-                        <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td>{{ field.label_tag }}</td>
-                        <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ request.user.username }}{{ field }}</font></td>
-                    </tr>
-                {% endif %}
+            {% if field.name != 'author' %}
+            <tr>
+                <td>{{ field.label_tag }}</td>
+                <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>{{ field.label_tag }}</td>
+                <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ request.user.username }}{{ field }}</font></td>
+            </tr>
+            {% endif %}
             {% endfor %}
             {{ gate_formset.management_form }}
             {% for form in gate_formset %}
-                {% for field in form.visible_fields %}
-                <tr>
-                    <td>{{ field.label_tag }}</td>
-                    <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
-                </tr>
-                {% endfor %}
+            {% for field in form.visible_fields %}
+            <tr>
+                <td>{{ field.label_tag }}</td>
+                <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+            </tr>
+            {% endfor %}
             {% endfor %}
         </table>
         <br>
