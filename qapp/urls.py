@@ -1,15 +1,16 @@
-from django.urls import path
 from django.conf.urls import url
 
 from . import views
 
+"""
+For using one generic.ListView for all type of gates, is necessary to specify parameter gate_type in as_view method.
+This parameter will be provided to Class GateListView in views.py and available in each method of this class.
+"""
+
 urlpatterns = [
-    #path('', views.index, name='index'),
     url(r'^$', views.index, name='index'),
     url(r'^bjc$', views.GateListView.as_view(gate_type='bjc'), name='bjc_list'),
     url(r'^bjw$', views.GateListView.as_view(gate_type='bjw'), name='bjw_list'),
-    #url(r'^bjc$', views.BjcView.as_view(), name='bjc_list'),
-    #url(r'^bjw$', views.BjwView.as_view(), name='bjw_list'),
     url(r'^iks$', views.GateListView.as_view(gate_type='iks'), name='iks_list'),
     url(r'^ikk$', views.GateListView.as_view(gate_type='ikk'), name='ikk_list'),
     url(r'^(?P<pk>[\w-]+)/$', views.DetailView.as_view(), name='gate_details'),
@@ -17,8 +18,6 @@ urlpatterns = [
     url(r'^(?P<pk>[\w-]+)/log$', views.LogView.as_view(), name='log'),
     url(r'^add$', views.gate_add, name='gate_add'),
     url(r'^(?P<pk>[\w-]+)/edit$', views.gate_edit, name='edit'),
-    #url(r'^(?P<tram>\D{1}\d{2})/(?P<car>\D{1}\d{1})/(?P<area>\D{3})/(?P<operation_no>\D{2}\d{4})/edit$',
-        #views.EditGate.as_view(), name='edit'),
     url(r'^mygates$', views.MyGates.as_view(), name='my_gates'),
     url(r'^massupdate$', views.mass_update, name='mass_update')
 ]

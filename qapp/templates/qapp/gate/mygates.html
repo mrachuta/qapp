@@ -33,9 +33,9 @@
             <td>{{ gate.name }}</td>
             <td>{{ gate.author }}</td>
             <td>{{ gate.area.responsible }}</td>
-            <td>{{ gate.get_gate_status_display }}</td>
-            <td>{{ gate.get_gate_rating_display|default:"-----" }}</td>
-            <td><a href="{{ gate.get_absolute_url }}">KLIK</a></td>
+            <td>{{ gate.get_status_display }}</td>
+            <td>{{ gate.rating|default:"---" }}</td>
+            <td><a href="{% url 'qapp:edit' gate.pk %}">KLIK</a></td>
         </tr>
         {% endfor %}
     </table>

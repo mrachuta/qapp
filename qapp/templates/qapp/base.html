@@ -68,7 +68,7 @@
                 <h3>Najwięcej odrzuceń</h3>
                 <hr>
                 <ol>
-                    {% for gate in topfive %}
+                    {% for gate in top_five %}
                     <li><a href="{{ gate.get_absolute_url}}">{{ gate.name }}<br>(ilość odrzuceń: {{ gate.reject_counter }})</a></li>
                     {% endfor %}
                 </ol>
@@ -78,12 +78,23 @@
     <div class="footer">
         <img src="{% static 'img/python_powered.png' %}"><img src="{% static 'img/and_ed.png' %}"><img src="{% static 'img/django_powered.png' %}">
     </div>
-    <div id="divcanvas" style="display: none;"></div>
     <script src="https://cdn.jsdelivr.net/npm/screw-filereader@1.4.3/index.min.js"></script>
     <script>
-    function toggleCheckbox(element) {
-       var inp = element.children[0];
+    function ToggleCheckbox(obj) {
+       var inp = obj.children[0];
        inp.checked = !inp.checked;
+    }
+
+    function ValidateForm() {
+      var comtextfield = document.getElementById('id_text').value;
+      var comfilefielda = document.getElementById('id_commentfile_set-0-file').value;
+      var comfilefieldb = document.getElementById('id_commentfile_set-1-file').value;
+      var comfilefieldc = document.getElementById('id_commentfile_set-2-file').value;
+      if(comtextfield == '' && (comfilefielda != null || comfilefieldb != null || comfilefieldc != null)) {
+        document.getElementById('id_text').value = '[Automatyczny komentarz; użytkownik dodał pliki i nie wprowadził żadnej treści]';
+        return true;
+      }
+      return true;
     }
 
     function FileListItem(a) {
@@ -94,9 +105,8 @@
       return b.files
     }
 
-    function change(selectObj) {
-      var divcanvas = document.getElementById('divcanvas');
-      const file = selectObj.files[0]
+    function ResizeImage(obj) {
+      const file = obj.files[0]
         if (!file) return
 
         file.image().then(img => {
@@ -116,7 +126,6 @@
 
         // scale & draw the image onto the canvas
         ctx.drawImage(img, 0, 0, width, height)
-        divcanvas.appendChild(canvas)
 
         // Get the binary (aka blob)
         canvas.toBlob(blob => {
@@ -126,9 +135,9 @@
           // temporary remove event listener since
           // assigning a new filelist to the input
           // will trigger a new change event...
-          selectObj.onchange = null
-          selectObj.files = fileList
-          selectObj.onchange = change
+          obj.onchange = null
+          obj.files = fileList
+          obj.onchange = ResizeImage
         }, 'image/jpeg', 0.70)
       })
       alert('Plik załadowany');

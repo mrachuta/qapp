@@ -1,8 +1,9 @@
 from django import forms
-from .models import Gate, Comment, CommentFile, GateFile, Tram
+from .models import Gate, Comment, CommentFile, GateFile, Tram, Bogie
 from django.forms import inlineformset_factory
 from re import search
 from django.core.validators import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def validate_op_no(op_no):
@@ -21,13 +22,14 @@ class GateFileAddForm(forms.ModelForm):
             'file': u'Plik'
         }
         widgets = {
-            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'change(this)'})
+            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'})
         }
 
 
 class GateAddForm(forms.ModelForm):
 
     tram = forms.ModelMultipleChoiceField(queryset=Tram.objects.all(), label=u'Tramwaj')
+    bogie = forms.ModelMultipleChoiceField(queryset=Bogie.objects.all(), label=u'Wózek')
     operation_no = forms.CharField(max_length=6, label=u'Numer operacji', validators=[validate_op_no])
     operation_no.widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
 
@@ -38,7 +40,7 @@ class GateAddForm(forms.ModelForm):
         fields = [
             'type',
             #'tram',
-            'bogie',
+            #'bogie',
             'bogie_type',
             'car',
             'area',
@@ -86,109 +88,88 @@ class GateAddForm(forms.ModelForm):
 
     def clean(self):
 
-        err_list = []
-        print('test')
-        def none_test(arg, condition):
+        """Custom validation for form.
+        First, validator check the integrity. Depending of Gate.type, some parameters are necessary, other are not
+        (see req_integrity dict).
+        During iteration, keys and values for specified Gate.type are checked. If parameter is necessary, there is True,
+        if not, there is False. (unselected/unfilled fields in form are sended as 'None'). Empty querysets for tram and
+        bogie are also send, but empty queryset is not recognized as None.
+        So, there is necessary to check, that query/dict value return some results. If not, validated_data is set to
+        None. Otherwise, validated_data is set to appropriate dict value.
+        If integrity is corrupted, there is no sense to go next steps; ValidationError is raised.
 
-            if condition is True and arg is not None:
-                return True
-            elif condition is False and arg is None:
-                return True
+        Next step is to check, that currently added Gate is not a duplicate of other Gate object.
+
+        Due to possibility to add multiple Gate (one Gate for multiple Tram/Bogie), iteration is over the
+        cleaned_data['tram'] or cleaned_data['bogie'].
+        For each object during iteration, the object_params dict is created.
+        Next, starts the iteration over fields that should be unique (see req_unique dict). If iteration found value,
+        which has the same name as req_unique[gate_type][1] element ('tram' or 'bogie'), add them also to object_params,
+        but with value from first iteration (object Tram or Bogie). Object is called using **kwargs from object_params
+        dict. If object exists, error is added to errors_list.
+
+        Due to function save_add_another via form and multiple Gates add in one shot, the list of errors is necessary
+        (consider a case, when multiple Gate in on shot are added: some object exists (ValidationError raised),
+        and other was added properly)
+        """
+
+        errors_list = []
+
+        #print(self.cleaned_data)
+
+        req_integrity = {
+            'BJC': {'tram': True, 'bogie': False, 'car': True, 'bogie_type': False},
+            'BJW': {'tram': False, 'bogie': True, 'car': False, 'bogie_type': True},
+            'IKS': {'tram': True, 'bogie': False, 'car': True, 'bogie_type': False},
+            'IKK': {'tram': True, 'bogie': False, 'car': True, 'bogie_type': False},
+
+        }
+
+        errors_integrity = {
+            'BJC': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" oraz "typ wózka" powinny pozostać puste!',
+            'BJW': u'Dla tego typu musisz wskazać "wózek" oraz "typ wózka"; pola "tramwaj" oraz "człon" powinny pozostać puste!',
+            'IKS': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" oraz "typ wózka" powinny pozostać puste!',
+            'IKK': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" oraz "typ "wózka" powinny pozostać puste!',
+        }
+
+        gate_type = self.cleaned_data['type']
+
+        for key, value in req_integrity[gate_type].items():
+
+            if not self.cleaned_data[key]:
+                validated_data = None
             else:
-                return False
+                validated_data = self.cleaned_data[key]
 
-        requirements_integrity = (
-            {
-                'BJC': {
-                    'conditions': [True, True, False, False],
-                    'err_msg': u'Dla tego typu musisz wskazać \'Tramwaj\', \'Człon\' oraz \'Numer operacji\'; '
-                               u'pola \'Wózek\' oraz \'Typ wózka\' powinny pozostać puste!'
-                }
-            },
-            {
-                'BJW': {
-                    'conditions': [False, False, True, True],
-                    'err_msg': 'Dla tego typu musisz wskazać \'Wózek\', \'Typ wózka\' oraz \'Numer operacji\'; '
-                               'pole \'Tramwaj\' oraz \'Człon\' powinny pozostać puste!'
-                }
-            },
-            {
-                'IKS': {
-                    'conditions': [True, True, False, False],
-                    'err_msg': u'Dla tego typu musisz wskazać \'Tramwaj\' oraz \'Człon\'; '
-                               u''u'pola \'Wózek\', \'Typ wózka\' oraz \'Numer operacji\' powinny pozostać puste!'
-                }
-            },
-            {
-                'IKK': {
-                    'conditions': [True, True, False, False],
-                    'err_msg': u'Dla tego typu musisz wskazać \'Tramwaj\' oraz \'Człon\'; '
-                               u'pola \'Wózek\', \'Typ wózka\' oraz \'Numer operacji\' powinny pozostać puste!'
-                }
-            },
-        )
+            if value is True and validated_data is not None:
+                pass
+            elif value is False and validated_data is None:
+                pass
+            else:
+                raise ValidationError(errors_integrity[gate_type])
 
-        for requirement in requirements_integrity:
-            for key, value in requirement.items():
-                if key == self.cleaned_data['type']:
-                    try:
-                        tram = self.cleaned_data['tram'][0]
-                    except IndexError:
-                        tram = None
-                    if not none_test(tram, value['conditions'][0]) \
-                            or not none_test(self.cleaned_data['car'], value['conditions'][1]) \
-                            or not none_test(self.cleaned_data['bogie'], value['conditions'][2]) \
-                            or not none_test(self.cleaned_data['bogie_type'], value['conditions'][3]):
-                                raise ValidationError(value['err_msg'])
-        print('test2')
-        for tram in self.cleaned_data['tram']:
-            requirements_unique = (
-                {
-                    'BJC': {
-                        'type': self.cleaned_data['type'],
-                        'tram': tram,
-                        'car': self.cleaned_data['car'],
-                        'area': self.cleaned_data['area'],
-                        'operation_no': self.cleaned_data['operation_no']
-                    }
-                },
-                {
-                    'BJW': {
-                        'type': self.cleaned_data['type'],
-                        'bogie': self.cleaned_data['bogie'],
-                        'bogie_type': self.cleaned_data['bogie_type'],
-                        'operation_no': self.cleaned_data['operation_no']
-                    }
-                },
-                {
-                    'IKS': {
-                        'type': self.cleaned_data['type'],
-                        'tram': tram,
-                        'name': self.cleaned_data['name']
-                    }
-                },
-                {
-                    'IKK':
-                        {'type': self.cleaned_data['type'],
-                         'tram': tram,
-                         'name': self.cleaned_data['name']
-                         }
-                },
-            )
+        req_unique = {
+            'BJC': ['type', 'tram', 'car', 'area', 'operation_no'],
+            'BJW': ['type', 'bogie', 'bogie_type', 'operation_no'],
+            'IKS': ['type', 'tram', 'name'],
+            'IKK': ['type', 'tram', 'name'],
+        }
 
-            for requirement in requirements_unique:
-                for key, value in requirement.items():
-                    if key == self.cleaned_data['type']:
-                        ob = Gate.objects.filter(**value)
-                        if ob.exists():
-                            err_list.append(ValidationError('taki obiekt już istnieje na {}!'.format(
-                                value.get('tram', '{}'.format(value.get('bogie', ''))))))
-        print('test3')
-        print(err_list)
-        if err_list:
-            raise ValidationError([err_list])
+        for i in self.cleaned_data[req_unique[gate_type][1]]:
+            object_params = {}
+            for value in req_unique[gate_type]:
+                print('Iteruje, printuje value')
+                print(value)
+                object_params[value] = self.cleaned_data[value]
+                if value == req_unique[gate_type][1]:
+                    object_params[value] = i
+            print(object_params)
+            ob = Gate.objects.filter(**object_params)
+            if ob.exists():
+                errors_list.append(ValidationError('taki obiekt już istnieje na {}!'.format(i)))
 
-        print('test4')
+        if errors_list:
+            raise ValidationError([errors_list])
 
         return self.cleaned_data
 
@@ -211,7 +192,7 @@ class CommentFileAddForm(forms.ModelForm):
             'file': u'Plik'
         }
         widgets = {
-            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'change(this)'})
+            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'})
         }
 
 

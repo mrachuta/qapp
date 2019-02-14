@@ -42,9 +42,9 @@
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.area }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.operation_no }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.name }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.get_gate_status_display }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.get_gate_rating_display|default:"-----"  }}</td>
-                <td onclick="toggleCheckbox(this)" class="center"><input type="checkbox" name="{{ gate.id }}"></td>
+                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.get_status_display }}</td>
+                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.rating|default:"---"  }}</td>
+                <td onclick="ToggleCheckbox(this)" class="center"><input type="checkbox" name="{{ gate.id }}"></td>
             </tr>
             {% endfor %}
         </table>

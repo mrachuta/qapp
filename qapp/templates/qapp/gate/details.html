@@ -41,7 +41,8 @@
             <td>Brygadzista:</td>
             <td>{{ gate.area.responsible.first_name }} {{ gate.area.responsible.last_name }} ({{ gate.area.responsible }})</td>
         </tr>
-        {% if gate_type == 'BJW' or gate_type == 'BJC' %}
+
+        {% if gate.type == 'BJW' or gate.type == 'BJC' %}
         <tr>
             <td>Numer operacji:</td>
             <td>{{ gate.operation_no }}</td>
@@ -76,7 +77,7 @@
         </tr>
         <tr>
             <td>Status realizacji:</td>
-            <td>{{ gate.get_gate_status_display }} ({{ gate.gate_status }})</td>
+            <td>{{ gate.get_status_display }} ({{ gate.status }})</td>
         </tr>
         <tr>
             <td>Ilość odrzuceń:</td>
@@ -84,13 +85,13 @@
         </tr>
         <tr>
             <td>Ocena</td>
-            <td>{{ gate.get_gate_rating_display }}</td>
+            <td>{{ gate.get_rating_display|default:"---" }} {% if gate.rating %} ({{ gate.rating }}) {% endif %}</td>
         </tr>
     </table>
     <br>
 </div>
 <div class="card" id="gate_{{ gate.id}}_form">
-    <form action="{% url 'qapp:update' gate.pk %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'qapp:update' gate.pk %}" method="post" enctype="multipart/form-data" onsubmit="return ValidateForm();">
         {% csrf_token %}
         {% if request.user|dzj_member or request.user == gate.area.responsible %}
         {% for field in comment_form %}
@@ -108,11 +109,11 @@
         <br>
         {% endfor %}
         {% endfor %}
-        {% if gate.gate_status == 'R' or gate.gate_status == 'P' %}
+        {% if gate.status == 'R' or gate.status == 'P' %}
         <button name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
         {% endif %}
         {% endif %}
-        {% if request.user|dzj_member and gate.gate_status == 'O' %}
+        {% if request.user|dzj_member and gate.status == 'O' %}
         <div class="fastaction">
             <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
             <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
