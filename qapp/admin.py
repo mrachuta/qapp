@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Tram, OperationArea, Gate, Comment, Log, GateFile, Bogie
-# Register your models here.
 
 
 class TramAdmin(admin.ModelAdmin):
@@ -8,6 +7,7 @@ class TramAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tram, TramAdmin)
+
 
 class BogieAdmin(admin.ModelAdmin):
     list_display = ('number', 'manufactured_date')

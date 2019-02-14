@@ -10,8 +10,11 @@ from django.conf import settings
 from django.utils.deconstruct import deconstructible
 
 
+
 @deconstructible
 class UploadToPathAndRename(object):
+
+    # Custom path and filename for uploaded files; code found on stackoverflow and edited.
 
     def __init__(self, path):
         self.sub_path = path
@@ -136,12 +139,13 @@ class Gate(models.Model):
     operation_no = models.CharField(max_length=6, null=True)
     name = models.CharField(max_length=200)
     content = models.TextField()
-    gate_status = models.CharField(choices=GATE_STATUSES, default='R', max_length=1)
-    gate_rating = models.CharField(choices=GATE_GRADES, blank=True, max_length=3)
+    status = models.CharField(choices=GATE_STATUSES, default='R', max_length=1)
+    rating = models.CharField(choices=GATE_GRADES, blank=True, max_length=3)
     reject_counter = models.IntegerField(default='0')
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='author')
     creation_date = models.DateTimeField(default=datetime.now(), blank=True)
     modify_date = models.DateTimeField(default='', blank=True, null=True)
+    # without this, call gate.object was impossible
     objects = models.Manager
 
     class Meta:
@@ -151,8 +155,6 @@ class Gate(models.Model):
             ('can_change_gate_rating', u'Może zmienić ocenę bramki'),
             ('can_add_new_gate', u'Może dodać nową bramkę')
         )
-
-        #unique_together = ('type', 'tram', 'car', 'area', 'operation_no')
 
     def __str__(self):
         return self.name
@@ -174,14 +176,12 @@ class GateFile(models.Model):
         return u'Załącznik do bramki: {}'.format(self.file)
 
 
-
 class Comment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     com_rel_gate = models.ForeignKey(Gate, on_delete=models.CASCADE)
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     text = models.TextField(max_length=2000, blank=True, null=True)
-    #file = models.FileField(upload_to='uploads_c', blank=True, null=True)
     date_time = models.DateTimeField(default=datetime.now())
 
     def __str__(self):
@@ -197,7 +197,6 @@ class CommentFile(models.Model):
 
     def __str__(self):
         return 'Załącznik do komentarza: {}'.format(self.file)
-
 
 
 class Log(models.Model):
