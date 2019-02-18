@@ -120,7 +120,7 @@ class GateListView(generic.ListView):
     def get_queryset(self):
         # Type is stored in database as big-letter word, so 'bjc' != 'BJC'.
         if self.gate_type.upper() == 'BJW':
-            ordering = ['bogie', 'bogie_type']
+            ordering = ['bogie']
         else:
             ordering = ['tram', 'car']
         queryset = Gate.objects.filter(type=self.gate_type.upper()).order_by(*ordering)
@@ -159,6 +159,8 @@ def gate_update(request, pk):
         comment_form = CommentAddForm(request.POST)
         comment_formset = CommentFileAddFormSet(request.POST, request.FILES)
         if comment_form.is_valid() and comment_formset.is_valid():
+            print(comment_form.cleaned_data)
+            print(comment_formset.cleaned_data)
             try:
                 # Check, does it is change of Gate.rating or Gate.status?
                 change_rating(gate, request.POST['new_rating'])
@@ -237,22 +239,24 @@ def gate_add(request):
         if gate_form.is_valid() and gate_formset.is_valid():
             if gate_form.cleaned_data['type'] == 'BJW':
                 # Gate.type is declared by user as 'BJW' (because for this type tram and car attributes are NULL's).
-                try:
-                    gate = gate_form.save(commit=False)
-                    gate.id = None
-                    gate.modify_date = None
-                    gate.save()
-                    for form in gate_formset:
-                        if form.cleaned_data != {}:
-                            a = form.save(commit=False)
-                            a.id = None
-                            a.file_rel_gate = gate
-                            a.save()
-                    generate_log(request.user, gate.pk, log_messages, gate, 'S', 'newgate')
-                except (IntegrityError, ValidationError):
-                    log_messages[log_date_time()] = ['', 'E', u'Bramka nie została dodana']
-                else:
-                    log_messages[log_date_time()] = ['', 'S', u'Bramka została dodana']
+                for bogie in gate_form.cleaned_data['bogie']:
+                    try:
+                        gate = gate_form.save(commit=False)
+                        gate.id = None
+                        gate.bogie = bogie
+                        gate.modify_date = None
+                        gate.save()
+                        for form in gate_formset:
+                            if form.cleaned_data != {}:
+                                a = form.save(commit=False)
+                                a.id = None
+                                a.file_rel_gate = gate
+                                a.save()
+                        generate_log(request.user, gate.pk, log_messages, gate, 'S', 'newgate')
+                    except (IntegrityError, ValidationError):
+                        log_messages[log_date_time()] = ['', 'E', u'Bramka nie została dodana']
+                    else:
+                        log_messages[log_date_time()] = ['', 'S', u'Bramka została dodana']
             else:
                 # Gate.type is other than 'BJW', because rest of types have bogie and bogie_type attributes as NULL's.
                 for tram in gate_form.cleaned_data['tram']:
@@ -406,7 +410,7 @@ def mass_update(request):
             if key != 'csrfmiddlewaretoken' and key != 'new_rating':
                 gate = get_object_or_404(Gate, pk=key)
                 # Make changes in gate, only if gate.status == 'O'
-                if gate.gate_status == 'O':
+                if gate.status == 'O':
                     change_rating(gate, request.POST['new_rating'])
                     generate_log(request.user, gate.pk, log_messages, gate, 'S', 'rating', request.POST['new_rating'])
                     log_messages[log_date_time()] = ['', 'S', u'Bramka została zaktualizowana']

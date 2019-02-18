@@ -41,7 +41,6 @@ class GateAddForm(forms.ModelForm):
             'type',
             #'tram',
             #'bogie',
-            'bogie_type',
             'car',
             'area',
             'name',
@@ -55,7 +54,6 @@ class GateAddForm(forms.ModelForm):
             'type': u'Typ',
             'tram': u'Tramwaj',
             'bogie': u'Wózek',
-            'bogie_type': u'Typ wózka',
             'car': u'Człon',
             'area': u'Obszar',
             'name': u'Nazwa',
@@ -76,7 +74,6 @@ class GateAddForm(forms.ModelForm):
         'tram',
         'car',
         'bogie',
-        'bogie_type',
         'area',
         'operation_no',
         'name',
@@ -118,18 +115,18 @@ class GateAddForm(forms.ModelForm):
         #print(self.cleaned_data)
 
         req_integrity = {
-            'BJC': {'tram': True, 'bogie': False, 'car': True, 'bogie_type': False},
-            'BJW': {'tram': False, 'bogie': True, 'car': False, 'bogie_type': True},
-            'IKS': {'tram': True, 'bogie': False, 'car': True, 'bogie_type': False},
-            'IKK': {'tram': True, 'bogie': False, 'car': True, 'bogie_type': False},
+            'BJC': {'tram': True, 'bogie': False, 'car': True, },
+            'BJW': {'tram': False, 'bogie': True, 'car': False, },
+            'IKS': {'tram': True, 'bogie': False, 'car': True, },
+            'IKK': {'tram': True, 'bogie': False, 'car': True, },
 
         }
 
         errors_integrity = {
-            'BJC': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" oraz "typ wózka" powinny pozostać puste!',
-            'BJW': u'Dla tego typu musisz wskazać "wózek" oraz "typ wózka"; pola "tramwaj" oraz "człon" powinny pozostać puste!',
-            'IKS': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" oraz "typ wózka" powinny pozostać puste!',
-            'IKK': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" oraz "typ "wózka" powinny pozostać puste!',
+            'BJC': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pole "wózek" powinno pozostać puste!',
+            'BJW': u'Dla tego typu musisz wskazać "wózek"; pola "tramwaj" oraz "człon" powinny pozostać puste!',
+            'IKS': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pole "wózek" powinno pozostać puste!',
+            'IKK': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" powinno pozostać puste!',
         }
 
         gate_type = self.cleaned_data['type']
@@ -150,7 +147,7 @@ class GateAddForm(forms.ModelForm):
 
         req_unique = {
             'BJC': ['type', 'tram', 'car', 'area', 'operation_no'],
-            'BJW': ['type', 'bogie', 'bogie_type', 'operation_no'],
+            'BJW': ['type', 'bogie', 'operation_no'],
             'IKS': ['type', 'tram', 'name'],
             'IKK': ['type', 'tram', 'name'],
         }
@@ -178,7 +175,6 @@ class GateAddForm(forms.ModelForm):
         self.fields['tram'].required = False
         self.fields['car'].required = False
         self.fields['bogie'].required = False
-        self.fields['bogie_type'].required = False
 
 
 class CommentFileAddForm(forms.ModelForm):
@@ -224,7 +220,6 @@ class GateChangeForm(forms.ModelForm):
             'type',
             'tram',
             'bogie',
-            'bogie_type',
             'car',
             'area',
             'name',
@@ -238,7 +233,6 @@ class GateChangeForm(forms.ModelForm):
             'type': u'Typ',
             'tram': u'Tramwaj',
             'bogie': u'Wózek',
-            'bogie_type': u'Typ wózka',
             'car': u'Człon',
             'area': u'Obszar',
             'name': u'Nazwa',
@@ -253,7 +247,6 @@ class GateChangeForm(forms.ModelForm):
             'type': forms.HiddenInput(),
             'tram': forms.HiddenInput(),
             'bogie': forms.HiddenInput(),
-            'bogie_type': forms.HiddenInput(),
             'car': forms.HiddenInput(),
             'area': forms.HiddenInput(),
             'creation_date': forms.HiddenInput(),
@@ -281,7 +274,6 @@ class GateChangeForm(forms.ModelForm):
         self.fields['tram'].required = False
         self.fields['car'].required = False
         self.fields['bogie'].required = False
-        self.fields['bogie_type'].required = False
 
 
 GateFileAddFormSet = forms.inlineformset_factory(Gate, GateFile, form=GateFileAddForm, extra=3, can_delete=False)

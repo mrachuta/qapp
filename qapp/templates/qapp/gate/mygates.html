@@ -27,7 +27,7 @@
             <td>{{ gate.tram|default_if_none:"-----" }}</td>
             <td>{{ gate.car|default_if_none:"-----" }}</td>
             <td>{{ gate.bogie|default_if_none:"-----" }}</td>
-            <td>{{ gate.bogie_type|default_if_none:"-----" }}</td>
+            <td>{{ gate.bogie.btype|default_if_none:"-----" }}</td>
             <td>{{ gate.area }}</td>
             <td>{{ gate.operation_no|default_if_none:"-----" }}</td>
             <td>{{ gate.name }}</td>

@@ -34,7 +34,7 @@
             <tr class="clickable" id="gate_{{ gate.id }}">
                 {% if 'bjw' in gate_type %}
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.bogie }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.bogie_type }}</td>
+                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.bogie.btype }}</td>
                 {% else %}
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.tram }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.car }}</td>
@@ -44,7 +44,13 @@
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.name }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.get_status_display }}</td>
                 <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.rating|default:"---"  }}</td>
-                <td onclick="ToggleCheckbox(this)" class="center"><input type="checkbox" name="{{ gate.id }}"></td>
+                <td class="center">
+                    <label for="{{ gate.id }}">
+                        <div>
+                            <input type="checkbox" id="{{ gate.id }}" name="{{ gate.id }}">
+                        </div>
+                    </label>
+                </td>
             </tr>
             {% endfor %}
         </table>

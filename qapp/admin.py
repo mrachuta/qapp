@@ -10,7 +10,7 @@ admin.site.register(Tram, TramAdmin)
 
 
 class BogieAdmin(admin.ModelAdmin):
-    list_display = ('number', 'manufactured_date')
+    list_display = ('number', 'manufactured_date', 'btype')
 
 
 admin.site.register(Bogie, BogieAdmin)

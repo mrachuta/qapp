@@ -80,17 +80,12 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/screw-filereader@1.4.3/index.min.js"></script>
     <script>
-    function ToggleCheckbox(obj) {
-       var inp = obj.children[0];
-       inp.checked = !inp.checked;
-    }
-
     function ValidateForm() {
       var comtextfield = document.getElementById('id_text').value;
       var comfilefielda = document.getElementById('id_commentfile_set-0-file').value;
       var comfilefieldb = document.getElementById('id_commentfile_set-1-file').value;
       var comfilefieldc = document.getElementById('id_commentfile_set-2-file').value;
-      if(comtextfield == '' && (comfilefielda != null || comfilefieldb != null || comfilefieldc != null)) {
+      if (comtextfield == '' && (comfilefielda || comfilefieldb || comfilefieldc)) {
         document.getElementById('id_text').value = '[Automatyczny komentarz; użytkownik dodał pliki i nie wprowadził żadnej treści]';
         return true;
       }
