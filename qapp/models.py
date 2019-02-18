@@ -45,19 +45,29 @@ class Tram(models.Model):
 
 
 class Bogie(models.Model):
+
+    BOGIE_TYPES = (
+        ('WN1', u'Wózek napędowy 1'),
+        ('WN2', u'Wózek napędowy 2'),
+        ('WT', u'Wózek toczny'),
+        ('WN3', u'Wózek napędowy 3'),
+        ('WN4', u'Wózek napędowy 4'),
+    )
+
     number = models.CharField(max_length=11)
     manufactured_date = models.IntegerField(default=date.today().year, validators=[
         MinValueValidator(2017),
         MaxValueValidator(date.today().year)
     ]
                                            )
+    btype = models.CharField(choices=BOGIE_TYPES, null=True, max_length=3, verbose_name='Bogie type')
     objects = models.Manager
 
     class Meta:
         ordering = ('-number',)
 
     def __str__(self):
-        return self.number
+        return '{} ({})'.format(self.number, self.btype)
 
 
 class OperationArea(models.Model):
@@ -109,14 +119,6 @@ class Gate(models.Model):
         ('C4', u'C4')
     )
 
-    BOGIE_TYPES = (
-        ('WN1', u'Wózek napędowy 1'),
-        ('WN2', u'Wózek napędowy 2'),
-        ('WT', u'Wózek toczny'),
-        ('WN3', u'Wózek napędowy 3'),
-        ('WN4', u'Wózek napędowy 4'),
-    )
-
     GATE_STATUSES = (
         ('R', u'Realizacja'),
         ('O', u'Ocena DZJ'),
@@ -133,7 +135,6 @@ class Gate(models.Model):
     type = models.CharField(choices=GATE_TYPE, default='BJC', max_length=3)
     tram = models.ForeignKey(Tram, null=True, on_delete=models.CASCADE)
     bogie = models.ForeignKey(Bogie, null=True, on_delete=models.CASCADE)
-    bogie_type = models.CharField(choices=BOGIE_TYPES, null=True, max_length=3)
     car = models.CharField(choices=CAR_SYMBOLS, max_length=2, null=True)
     area = models.ForeignKey(OperationArea, null=True, on_delete=models.CASCADE)
     operation_no = models.CharField(max_length=6, null=True)
