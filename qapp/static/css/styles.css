@@ -70,9 +70,17 @@ a {
     border-bottom: 1px solid #ddd;
 }
 
-.wp-table tr.clickable:hover {
+.wp-table tr.clickable a {
+    display: block;
+    color: black !important;
+    text-decoration: none;
+}
+
+.wp-table tr.clickable:hover,
+.wp-table tr.clickable:hover a {
     background-color: #333;
-    color: white;
+    color: white !important;
+    text-decoration: none;
 }
 
 .wp-table th:first-child,
@@ -89,7 +97,7 @@ a {
 
 .wp-table td,
 .wp-table th {
-    padding: 8px 8px;
+    padding: 8px 2px;
     display: table-cell;
     text-align: left;
     vertical-align: top;
@@ -103,7 +111,7 @@ a {
     font-size: 15px!important;
     border: 1px solid #ccc;
     border-collapse: collapse;
-    border-spacing: 0;
+    border-spacing: 50px 0;
     width: 100%;
     display: table;
 }

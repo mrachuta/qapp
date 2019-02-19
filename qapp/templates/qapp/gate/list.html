@@ -33,17 +33,17 @@
             {% for gate in gate_list %}
             <tr class="clickable" id="gate_{{ gate.id }}">
                 {% if 'bjw' in gate_type %}
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.bogie }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.bogie.btype }}</td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.bogie }}</a></td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.bogie.btype }}</a></td>
                 {% else %}
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.tram }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.car }}</td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.tram }}</a></td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.car }}</a></td>
                 {% endif %}
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.area }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.operation_no }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.name }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.get_status_display }}</td>
-                <td onclick="window.location='{{ gate.get_absolute_url }}';">{{ gate.rating|default:"---"  }}</td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.area }}</a></td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.operation_no }}</a></td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.name }}</a></td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.get_status_display }}</a></td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.rating|default:"---" }}</a></td>
                 <td class="center">
                     <label for="{{ gate.id }}">
                         <div>
