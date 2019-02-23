@@ -249,7 +249,9 @@ def gate_add(request):
                         gate.save()
                         for form in gate_formset:
                             if form.is_valid():
-                                if form.has_changed():
+                                # Here, form.has_change() has no effect, because for n+1 iteration
+                                # form stay unchanged and Django throws an error.
+                                if form.cleaned_data != {}:
                                     a = form.save(commit=False)
                                     a.id = None
                                     a.file_rel_gate = gate
@@ -271,7 +273,9 @@ def gate_add(request):
                         gate_formset.save()
                         for form in gate_formset:
                                 if form.is_valid():
-                                    if form.has_changed():
+                                    # Here, form.has_change() has no effect, because for n+1 iteration
+                                    # form stay unchanged and Django throws an error.
+                                    if form.cleaned_data != {}:
                                         a = form.save(commit=False)
                                         a.id = None
                                         a.file_rel_gate = gate
