@@ -43,9 +43,9 @@
             <button class="dropbtn">{{ request.user.first_name }} {{ request.user.last_name }} ({{ request.user.username }})</button>
             <div class="dropdown-content">
                 {% if request.user|dzj_member %}
-                <a href="{% url 'qapp:my_gates' %}?&gate_status=O">Do oceny: {{ user_gates_count }}</a>
+                <a href="{% url 'qapp:my_gates' %}?operation_no=&status=O">Do oceny: {{ user_gates_count }}</a>
                 {% else %}
-                <a href="{% url 'qapp:my_gates' %}?&gate_status=P">Do poprawki: {{ user_gates_count }}</a>
+                <a href="{% url 'qapp:my_gates' %}?operation_no=&status=P">Do poprawki: {{ user_gates_count }}</a>
                 {% endif %}
                 <a href="{% url 'logout' %}?next={% url 'qapp:index' %}">Wyloguj</a>
             </div>
