@@ -268,7 +268,6 @@ def gate_add(request):
                         gate.tram = tram
                         gate.modify_date = None
                         gate.save()
-                        gate_formset.save()
                         for form in gate_formset:
                                 if form.is_valid():
                                     if form.has_changed():
