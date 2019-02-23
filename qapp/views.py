@@ -4,14 +4,19 @@ from .models import Gate
 from django.views import generic
 from .forms import GateAddForm, GateFileAddFormSet, CommentAddForm, CommentFileAddFormSet, GateChangeForm, GateFileChangeFormSet
 from django.db import IntegrityError
-from datetime import datetime
-import time
+#from datetime import datetime
+#import time
+from django.utils import timezone
+import pytz
 from .filters import GateFilter
 from django.core.validators import ValidationError
 
 
-def log_date_time():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+def log_date_time(**kwargs):
+    if kwargs == {'format': 'yes'}:
+        return timezone.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+    else:
+        return timezone.now()
 
 
 def generate_log(curr_user, pk, log_dict, gate, category, action, *args):
@@ -33,7 +38,7 @@ def generate_log(curr_user, pk, log_dict, gate, category, action, *args):
     else:
         new_value = ''
 
-    curr_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S:%f")
+    curr_time = timezone.now().strftime("%Y-%m-%d %H:%M:%S:%f")
 
     act_type = {
         'rating': u'zaktualizowano ocenę: {}'.format(new_value),
@@ -159,8 +164,6 @@ def gate_update(request, pk):
         comment_form = CommentAddForm(request.POST)
         comment_formset = CommentFileAddFormSet(request.POST, request.FILES)
         if comment_form.is_valid() and comment_formset.is_valid():
-            print(comment_form.cleaned_data)
-            print(comment_formset.cleaned_data)
             try:
                 # Check, does it is change of Gate.rating or Gate.status?
                 change_rating(gate, request.POST['new_rating'])
@@ -168,8 +171,7 @@ def gate_update(request, pk):
             except KeyError:
                 change_status(gate, request.POST['new_status'])
                 generate_log(request.user, pk, log_messages, gate, 'S', 'status', request.POST['new_status'])
-
-            if comment_form.cleaned_data['text'] != '':
+            if comment_form.has_changed():
                 # If comment-text is not empty, add Comment object.
                 try:
                     comment = comment_form.save(commit=False)
@@ -182,26 +184,26 @@ def gate_update(request, pk):
                     # Try to iterate over files attached to Comment object and add every file as CommentFile object.
                     # Adding empty comment-text with files is prevented, using JS (see details.html template).
                     for form in comment_formset:
-                        if form.cleaned_data != {}:
-                            a = form.save(commit=False)
-                            a.id = None
-                            a.file_rel_comment = comment
-                            a.save()
-                            generate_log(request.user, pk, log_messages, gate, 'S', 'file')
-                            # Sleep for a moment, to generate log with different time for each file.
-                            # Without this, every file have the same time of adding in log.
-                            #time.sleep(0.1)
+                        if form.is_valid():
+                            if form.has_changed():
+                                a = form.save(commit=False)
+                                a.id = None
+                                a.file_rel_comment = comment
+                                a.save()
+                                generate_log(request.user, pk, log_messages, gate, 'S', 'file')
+                                # Sleep for a moment, to generate log with different time for each file.
+                                # Without this, every file have the same time of adding in log.
+                                #time.sleep(0.1)
                 except IntegrityError:
-                    log_messages[log_date_time()] = [pk, 'E', u'Bramka nie została zaktualizowana']
-            log_messages[log_date_time()] = [pk, 'S', u'Bramka została zaktualizowana']
+                    log_messages[log_date_time(format='yes')] = [pk, 'E', u'Bramka nie została zaktualizowana']
+            log_messages[log_date_time(format='yes')] = [pk, 'S', u'Bramka została zaktualizowana']
             # If all jobs finished, go to result page and show the changes stored in log_messages dict
             return render(request, 'qapp/gate/results.html', {
                 'log_messages': log_messages,
             }
                           )
-
         else:
-
+            # If there some errors in form, allow user to correct data (render pre-filled form with error messages).
             gate_form = GateAddForm(request.POST)
             gate_formset = GateFileAddFormSet(request.POST)
             return render(request, 'qapp/gate/add.html', {
@@ -209,7 +211,6 @@ def gate_update(request, pk):
                 'formset': gate_formset,
             }
                           )
-
     else:
         # If request was not made by POST method, render blank form.
         gate_form = GateAddForm(None)
@@ -247,16 +248,17 @@ def gate_add(request):
                         gate.modify_date = None
                         gate.save()
                         for form in gate_formset:
-                            if form.cleaned_data != {}:
-                                a = form.save(commit=False)
-                                a.id = None
-                                a.file_rel_gate = gate
-                                a.save()
+                            if form.is_valid():
+                                if form.has_changed():
+                                    a = form.save(commit=False)
+                                    a.id = None
+                                    a.file_rel_gate = gate
+                                    a.save()
                         generate_log(request.user, gate.pk, log_messages, gate, 'S', 'newgate')
                     except (IntegrityError, ValidationError):
-                        log_messages[log_date_time()] = ['', 'E', u'Bramka nie została dodana']
+                        log_messages[log_date_time(format='yes')] = ['', 'E', u'Bramka nie została dodana']
                     else:
-                        log_messages[log_date_time()] = ['', 'S', u'Bramka została dodana']
+                        log_messages[log_date_time(format='yes')] = ['', 'S', u'Bramka została dodana']
             else:
                 # Gate.type is other than 'BJW', because rest of types have bogie and bogie_type attributes as NULL's.
                 for tram in gate_form.cleaned_data['tram']:
@@ -266,19 +268,21 @@ def gate_add(request):
                         gate.tram = tram
                         gate.modify_date = None
                         gate.save()
+                        gate_formset.save()
                         for form in gate_formset:
-                            if form.cleaned_data != {}:
-                                a = form.save(commit=False)
-                                a.id = None
-                                a.file_rel_gate = gate
-                                a.save()
+                                if form.is_valid():
+                                    if form.has_changed():
+                                        a = form.save(commit=False)
+                                        a.id = None
+                                        a.file_rel_gate = gate
+                                        a.save()
                         generate_log(request.user, gate.pk, log_messages, gate, 'S', 'newgate')
                     except (IntegrityError, ValidationError):
-                        log_messages[log_date_time()] = ['', 'E', u'Bramka nie została dodana']
+                        log_messages[log_date_time(format='yes')] = ['', 'E', u'Bramka nie została dodana']
                     else:
-                        log_messages[log_date_time()] = ['', 'S', u'Bramka została dodana']
+                        log_messages[log_date_time(format='yes')] = ['', 'S', u'Bramka została dodana']
             if 'save_add_another' in request.POST:
-                # To speed-up multiple Gate adding, enerating results via results.html are skipped.
+                # To speed-up multiple Gate adding, generating results via results.html are skipped.
                 # Pre-filled form with important data from previous request is generated; the results of previous
                 # request are showed below the form.
                 init_params = {
@@ -288,7 +292,7 @@ def gate_add(request):
                     'bogie': request.POST.get('bogie', ''),
                     'bogie_type': request.POST.get('bogie_type', ''),
                     'area': request.POST['area'],
-                    'creation_date': datetime.now(),
+                    'creation_date': timezone.now(),
                     'author': request.POST['author']
                 }
                 gate_form = GateAddForm(None, initial=init_params)
@@ -318,7 +322,7 @@ def gate_add(request):
         # If request was not made by POST method, render blank form.
         gate_form = GateAddForm(None, initial={
             'author': request.user,
-            'creation_date': datetime.now()
+            'creation_date': timezone.now()
         }
                                 )
         gate_formset = GateFileAddFormSet(None)
@@ -364,29 +368,30 @@ def gate_edit(request, pk):
     log_messages = {}
     gate = get_object_or_404(Gate, pk=pk)
     # Fields below could be changed on existing model via POST request; rest of model fields are generated as static
-    fields_to_show = [
-        'operation_no',
-        'name',
-        'content',
-        'modify_date'
-    ]
     if request.method == "POST":
         gate_form = GateChangeForm(request.POST, instance=gate)
         gate_formset = GateFileChangeFormSet(request.POST, request.FILES, instance=gate)
         if gate_form.is_valid() and gate_formset.is_valid():
             try:
                 gate.save()
-                for form in gate_formset:
-                    if form.cleaned_data != {}:
-                        a = form.save(commit=False)
-                        a.save()
+                gate_formset.save()
                 generate_log(request.user, gate.pk, log_messages, gate, 'S', 'editgate')
             except (IntegrityError, ValidationError):
-                log_messages[log_date_time()] = ['', 'E', u'Bramka nie została zmieniona']
+                log_messages[log_date_time(format='yes')] = ['', 'E', u'Bramka nie została zmieniona']
             else:
-                log_messages[log_date_time()] = ['', 'S', u'Bramka została zmieniona']
+                log_messages[log_date_time(format='yes')] = ['', 'S', u'Bramka została zmieniona']
             return render(request, 'qapp/gate/results.html', {
                 'log_messages': log_messages,
+            }
+                          )
+        else:
+            # If there some errors in form, allow user to correct data (render pre-filled form with error messages).
+            gate_form = GateChangeForm(request.POST, instance=gate, initial={'modify_date': log_date_time()})
+            gate_formset = GateFileChangeFormSet(request.POST, request.FILES, instance=gate)
+            return render(request, 'qapp/gate/edit.html', {
+                'gate_form': gate_form,
+                'gate_formset': gate_formset,
+                'gate.pk': pk,
             }
                           )
     else:
@@ -396,7 +401,7 @@ def gate_edit(request, pk):
         return render(request, 'qapp/gate/edit.html', {
             'gate_form': gate_form,
             'gate_formset': gate_formset,
-            'fields_to_show': fields_to_show
+            'gate.pk': pk,
         }
                       )
 
@@ -413,9 +418,9 @@ def mass_update(request):
                 if gate.status == 'O':
                     change_rating(gate, request.POST['new_rating'])
                     generate_log(request.user, gate.pk, log_messages, gate, 'S', 'rating', request.POST['new_rating'])
-                    log_messages[log_date_time()] = ['', 'S', u'Bramka została zaktualizowana']
+                    log_messages[log_date_time(format='yes')] = ['', 'S', u'Bramka została zaktualizowana']
                 else:
-                    log_messages[log_date_time()] = ['', 'E', u'Bramka nie została zaktualizowana']
+                    log_messages[log_date_time(format='yes')] = ['', 'E', u'Bramka nie została zaktualizowana']
         return render(request, 'qapp/gate/results.html', {
             'log_messages': log_messages,
         }

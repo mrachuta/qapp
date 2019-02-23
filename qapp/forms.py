@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def validate_op_no(op_no):
     if not search(r'\D{2}\d{4}', op_no):
-        raise forms.ValidationError('Operacja musi składać się z dwóch liter i czterech cyfr')
+        raise forms.ValidationError({'operation_no': ['Operacja musi składać się z dwóch wielkich liter i czterech cyfr',]})
 
 
 class GateFileAddForm(forms.ModelForm):
@@ -19,10 +19,10 @@ class GateFileAddForm(forms.ModelForm):
             'file',
         ]
         labels = {
-            'file': u'Plik'
+            'file': u'Plik',
         }
         widgets = {
-            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'})
+            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'}),
         }
 
 
@@ -30,8 +30,8 @@ class GateAddForm(forms.ModelForm):
 
     tram = forms.ModelMultipleChoiceField(queryset=Tram.objects.all(), label=u'Tramwaj')
     bogie = forms.ModelMultipleChoiceField(queryset=Bogie.objects.all(), label=u'Wózek')
-    operation_no = forms.CharField(max_length=6, label=u'Numer operacji', validators=[validate_op_no])
-    operation_no.widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
+    #operation_no = forms.CharField(max_length=6, min_length=6, label=u'Numer operacji')
+    #operation_no.widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
 
     class Meta:
 
@@ -39,8 +39,6 @@ class GateAddForm(forms.ModelForm):
 
         fields = [
             'type',
-            #'tram',
-            #'bogie',
             'car',
             'area',
             'name',
@@ -83,6 +81,16 @@ class GateAddForm(forms.ModelForm):
 
     ]
 
+    def __init__(self, *args, **kwargs):
+        super(GateAddForm, self).__init__(*args, **kwargs)
+        self.fields['tram'].required = False
+        self.fields['car'].required = False
+        self.fields['bogie'].required = False
+        self.fields['operation_no'].max_length = 6
+        self.fields['operation_no'].min_length = 6
+        self.fields['operation_no'].label = u'Numer operacji'
+        self.fields['operation_no'].widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
+
     def clean(self):
 
         """Custom validation for form.
@@ -110,9 +118,9 @@ class GateAddForm(forms.ModelForm):
         and other was added properly)
         """
 
-        errors_list = []
+        validate_op_no(self.cleaned_data['operation_no'])
 
-        #print(self.cleaned_data)
+        errors_list = []
 
         req_integrity = {
             'BJC': {'tram': True, 'bogie': False, 'car': True, },
@@ -170,12 +178,6 @@ class GateAddForm(forms.ModelForm):
 
         return self.cleaned_data
 
-    def __init__(self, *args, **kwargs):
-        super(GateAddForm, self).__init__(*args, **kwargs)
-        self.fields['tram'].required = False
-        self.fields['car'].required = False
-        self.fields['bogie'].required = False
-
 
 class CommentFileAddForm(forms.ModelForm):
 
@@ -210,8 +212,6 @@ class CommentAddForm(forms.ModelForm):
 
 
 class GateChangeForm(forms.ModelForm):
-
-    #trams_to_apply = forms.ModelMultipleChoiceField(queryset=Tram.objects.all(), label=u'Tramwaje do wprowadzenia zmiany')
 
     class Meta:
 
@@ -255,18 +255,10 @@ class GateChangeForm(forms.ModelForm):
         }
 
         field_order = [
-            #'type',
-            #'tram',
-            #'car',
-            #'bogie',
-            #'bogie_type',
-            #'area',
             'operation_no',
             'name',
             'content',
             'modify_date'
-            #'creation_date',
-            #'author'
         ]
 
     def __init__(self, *args, **kwargs):
@@ -274,6 +266,40 @@ class GateChangeForm(forms.ModelForm):
         self.fields['tram'].required = False
         self.fields['car'].required = False
         self.fields['bogie'].required = False
+
+    def clean(self):
+
+        validate_op_no(self.cleaned_data['operation_no'])
+
+        curr_ob = Gate.objects.get(pk=self.instance.pk)
+
+        req_unique = {
+            'BJC': ['type', 'tram', 'car', 'area', 'operation_no'],
+            'BJW': ['type', 'bogie', 'operation_no'],
+            'IKS': ['type', 'tram', 'name'],
+            'IKK': ['type', 'tram', 'name'],
+        }
+
+        ob_params = {}
+
+        for i in req_unique[self.cleaned_data['type']]:
+            if getattr(curr_ob, i) != self.cleaned_data[i]:
+                for i in req_unique[self.cleaned_data['type']]:
+                    ob_params[i] = self.cleaned_data[i]
+                break
+            else:
+                pass
+
+        if ob_params and Gate.objects.filter(**ob_params).exists():
+            message = '{} {}, obszar {}'.format(
+                self.cleaned_data.get('tram', self.cleaned_data['bogie']),
+                self.cleaned_data.get('car', ''),
+                self.cleaned_data.get('area', ''))
+
+            raise ValidationError(
+                'Taki obiekt już istnieje na {}'.format(message))
+
+        return self.cleaned_data
 
 
 GateFileAddFormSet = forms.inlineformset_factory(Gate, GateFile, form=GateFileAddForm, extra=3, can_delete=False)
