@@ -163,12 +163,9 @@ class GateAddForm(forms.ModelForm):
         for i in self.cleaned_data[req_unique[gate_type][1]]:
             object_params = {}
             for value in req_unique[gate_type]:
-                print('Iteruje, printuje value')
-                print(value)
                 object_params[value] = self.cleaned_data[value]
                 if value == req_unique[gate_type][1]:
                     object_params[value] = i
-            print(object_params)
             ob = Gate.objects.filter(**object_params)
             if ob.exists():
                 errors_list.append(ValidationError('taki obiekt już istnieje na {}!'.format(i)))
