@@ -13,43 +13,48 @@
         {% for error in gate_formset.non_field_errors %}
         <font color="red">Błąd: {{ error }}</font><br><br>
         {% endfor %}
-         <table class="wp-table">
+        <table class="wp-table">
             <tr>
                 <th>Pole</th>
                 <th>Wartość</th>
             </tr>
             {% for field in gate_form %}
-            {% if field.name in fields_to_show %}
-                <tr>
-                    <td>{{ field.label_tag }}</td>
-                    <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
-                </tr>
-            {% else %}
+            {% if field.is_hidden %}
             {% with field.name as fieldn %}
-                <tr>
-                    <td>{{ field.label_tag }}</td>
-                    <td>
-                        {% if field.errors %}
-                        <font color="red">{{ field.errors }}</font>
-                        {% endif %}
-                        {{ field }}
-                        {% if field.name == 'creation_date' %}
-                        {{ gate_form.instance|get_obj_attr:fieldn|date:"Y-m-d H:i:s.u" }}
-                        {% else %}
-                        {{ gate_form.instance|get_obj_attr:fieldn|default_if_none:"-" }}
-                        {% endif %}
-                    </td>
-                </tr>
+            <tr>
+                <td>{{ field.label_tag }}</td>
+                <td>{{ field }}
+                    {% if fieldn != 'creation_date' %}
+                    {{ gate_form.instance|get_obj_attr:fieldn|default_if_none:"-" }}
+                    {% else %}
+                    {{ gate_form.instance|get_obj_attr:fieldn|date:"Y-m-d H:i:s.u" }}
+                    {% endif %}
+                </td>
+            </tr>
             {% endwith %}
+            {% else %}
+            <tr>
+                <td>{{ field.label_tag }}</td>
+                <td>{% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+            </tr>
             {% endif %}
             {% endfor %}
             {{ gate_formset.management_form }}
             {% for form in gate_formset %}
+            {% if form.instance.file %}
+            <tr>
+                <td>Nazwa pliku</td>
+                <td>{{ form.instance.file }}<td>
+            </tr>
+            {% endif  %}
             {% for field in form.visible_fields %}
             <tr>
                 <td>{{ field.label_tag }}</td>
                 <td>{% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
             </tr>
+            {% endfor %}
+            {% for hidden in form.hidden_fields %}
+            {{ hidden }}
             {% endfor %}
             {% endfor %}
         </table>
@@ -57,4 +62,12 @@
         <button type="submit" class="save btn btn-default">Zapisz</button>
     </form>
 </div>
+{% endblock %}
+
+{% block firstcard %}
+<h3>Szybkie akcje:</h3>
+<hr>
+<ul>
+    <li><a href="{{ request.META.HTTP_REFERER }}">Wróć do poprzedniego widoku</a></li>
+</ul>
 {% endblock %}

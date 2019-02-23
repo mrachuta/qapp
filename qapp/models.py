@@ -8,7 +8,7 @@ import uuid
 import os
 from django.conf import settings
 from django.utils.deconstruct import deconstructible
-
+from django.utils import timezone
 
 
 @deconstructible
@@ -144,8 +144,8 @@ class Gate(models.Model):
     rating = models.CharField(choices=GATE_GRADES, blank=True, max_length=3)
     reject_counter = models.IntegerField(default='0')
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='author')
-    creation_date = models.DateTimeField(default=datetime.now(), blank=True)
-    modify_date = models.DateTimeField(default='', blank=True, null=True)
+    creation_date = models.DateTimeField(default=timezone.now) #było timezone.now()
+    modify_date = models.DateTimeField(default='', blank=True, null=True) #było default=''
     # without this, call gate.object was impossible
     objects = models.Manager
 
@@ -183,7 +183,7 @@ class Comment(models.Model):
     com_rel_gate = models.ForeignKey(Gate, on_delete=models.CASCADE)
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     text = models.TextField(max_length=2000, blank=True, null=True)
-    date_time = models.DateTimeField(default=datetime.now())
+    date_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return 'Komentarz, autor: {}'.format(self.author)
@@ -203,7 +203,7 @@ class CommentFile(models.Model):
 class Log(models.Model):
 
     log_rel_gate = models.ForeignKey(Gate, on_delete=models.CASCADE)
-    date_time = models.DateTimeField(default=datetime.now())
+    date_time = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     category = models.CharField(max_length=1, blank=True)
     action = models.CharField(max_length=30)

@@ -3,7 +3,7 @@
 {% block title %}QAPP - dodaj bramkę{% endblock %}
 
 {% block content %}
-<div class="card" id="gate_{{ gate.id }}_add">
+<div class="card" id="gate_add">
     <form method="POST" class="post-form" enctype="multipart/form-data">
         {%csrf_token%}
         {% if log_messages %}
