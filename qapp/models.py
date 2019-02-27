@@ -144,9 +144,9 @@ class Gate(models.Model):
     rating = models.CharField(choices=GATE_GRADES, blank=True, max_length=3)
     reject_counter = models.IntegerField(default='0')
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='author')
-    creation_date = models.DateTimeField(default=timezone.now) #było timezone.now()
-    modify_date = models.DateTimeField(default='', blank=True, null=True) #było default=''
-    # without this, call gate.object was impossible
+    creation_date = models.DateTimeField(default=timezone.now)
+    modify_date = models.DateTimeField(default='', blank=True, null=True)
+    # Without this, call gate.object was impossible
     objects = models.Manager
 
     class Meta:

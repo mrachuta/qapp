@@ -106,7 +106,6 @@
         {% for form in comment_formset %}
         {% for field in form.visible_fields %}
         {% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
-        <br>
         {% endfor %}
         {% endfor %}
         {% if gate.status == 'R' or gate.status == 'P' %}
@@ -122,6 +121,8 @@
         <button name="new_rating" type="submit" value="NOK">Odrzuć</button>
         {% endif %}
     </form>
+    <br>
+    <div id="divcanvas" style="overflow: hidden; height: 0;"></div>
 </div>
 {% for comment in gate.comment_set.all reversed %}
 <div class="card" id="gate_{{ gate.id}}_comment_{{ comment.id }}">

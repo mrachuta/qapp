@@ -187,7 +187,7 @@ class CommentFileAddForm(forms.ModelForm):
             'file': u'Plik'
         }
         widgets = {
-            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'})
+            'file': forms.FileInput(attrs={'class': 'addfile', 'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'})
         }
 
 
