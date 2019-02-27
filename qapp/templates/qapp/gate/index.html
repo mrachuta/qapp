@@ -13,10 +13,16 @@
 {% endblock %}
 
 {% block firstcard %}
-    <h3>Pierwsze menu</h3>
+    <h3>Informacje o użytkowniku</h3>
     <hr>
     {% if user.is_authenticated %}
-    Jakaś treść
+    Zalogowany użytkownik: <b>{{ user }}</b>
+    <br>
+    <br>
+    Należy do grupy:
+    {% for group in user.groups.all %}
+    <b>{{ group|upper }},</b>
+    {% endfor %}
     {% else %}
     Treść dostępna tylko dla zalogowanych użytkowników!
     {% endif %}
