@@ -25,10 +25,10 @@ function FileListItem(a) {
 function ResizeImage(obj) {
     // Modified ResizeImage function.
     // Original code by Jimmy Wärting (https://github.com/jimmywarting)
-    var divCanvas = document.getElementById('divcanvas');
+    var divCanvas = document.getElementById('canvas-area');
     var currFieldId = document.getElementById(obj.id);
     var divStatus = document.createElement('div');
-    divStatus.setAttribute('class', 'uploadstatus');
+    divStatus.setAttribute('class', 'upload-status');
     const file = obj.files[0]
     if (!file) return
 
@@ -52,7 +52,7 @@ function ResizeImage(obj) {
         // on mobile browsers.
         // In this case, canvas is inserted to hidden div (display: none)
         ctx.drawImage(img, 0, 0, width, height)
-        divcanvas.appendChild(canvas)
+        divCanvas.appendChild(canvas)
 
         // Get the binary (aka blob)
         canvas.toBlob(blob => {
@@ -71,12 +71,12 @@ function ResizeImage(obj) {
     function ShowConfirmation() {
         if (document.getElementById('canvas_' + obj.id)) {
             // console.log('Uploaded canvas_' + obj.id)
-            divStatus.innerHTML = '<font color="#12b70c">Konwertowanie zakończone!</font>';
+            divStatus.innerHTML = '<font color="#4CAF50">Konwertowanie zakończone!</font>';
             currFieldId.parentNode.insertBefore(divStatus, currFieldId.nextSibling);
             return true;
         }
         else {
-            divStatus.innerHTML = '<font color="red">W trakcie konwertowania...</font>';
+            divStatus.innerHTML = '<font color="#F44336">W trakcie konwertowania...</font>';
             currFieldId.parentNode.insertBefore(divStatus, currFieldId.nextSibling);
         }
     }

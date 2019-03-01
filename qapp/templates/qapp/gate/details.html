@@ -105,11 +105,13 @@
         <br>
         {% for form in comment_formset %}
         {% for field in form.visible_fields %}
-        {% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
+        <label class="upload-file">
+        Wybierz plik!{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
+        </label>
         {% endfor %}
         {% endfor %}
         {% if gate.status == 'R' or gate.status == 'P' %}
-        <button name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
+        <button class="ready-small" name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
         {% endif %}
         {% endif %}
         {% if request.user|dzj_member and gate.status == 'O' %}
@@ -117,12 +119,12 @@
             <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
             <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
         </div>
-        <button name="new_rating" type="submit" value="OK">Akceptuj</button>
-        <button name="new_rating" type="submit" value="NOK">Odrzuć</button>
+        <button class="ok-small" name="new_rating" type="submit" value="OK">Akceptuj</button>
+        <button class="nok-small" name="new_rating" type="submit" value="NOK">Odrzuć</button>
         {% endif %}
     </form>
     <br>
-    <div id="divcanvas" style="overflow: hidden; height: 0;"></div>
+    <div id="canvas-area" style="overflow: hidden; height: 0;"></div>
 </div>
 {% for comment in gate.comment_set.all reversed %}
 <div class="card" id="gate_{{ gate.id}}_comment_{{ comment.id }}">

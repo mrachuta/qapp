@@ -88,19 +88,12 @@ a {
     padding-left: 16px;
 }
 
-/* Class for centering content of last td and th in list of points */
-
-.wp-table .center {
-    text-align: center;
-    vertical-align: middle;
-}
-
 .wp-table td,
 .wp-table th {
     padding: 8px 2px;
     display: table-cell;
     text-align: left;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .wp-table th {
@@ -115,6 +108,21 @@ a {
     width: 100%;
     display: table;
 }
+
+/* Class for centering content of last td and th in list of points */
+
+.wp-table .center {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Class for styling gate name in .wp-table */
+
+.gate-name {
+    width: 500px;
+    font-style: italic;
+}
+
 
 /* End of Table */
 
@@ -222,7 +230,7 @@ a {
 
 #nok {
   top: 410px;
-  background-color: #f44336;
+  background-color: #F44336;
   }
 
 /* File icon */
@@ -244,15 +252,82 @@ a {
 
 /* Addfile button and status div (for comments) */
 
-.addfile {
+.add-file {
     display: block;
     width: 100%;
 }
 
-.uploadstatus {
+.upload-status {
     display: block;
     padding: 10px;
 }
+
+/* Buttons styling */
+
+input[type="file"] {
+    display: none;
+}
+
+.upload-file {
+  display: inline-block;
+  background-color: #333333;
+  border: none;
+  color: white;
+  text-align: center;
+  padding: 35px 0px 35px 0px;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 160px;
+  height: 90px;
+}
+
+.ok-small {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 160px;
+  height: 90px;
+}
+
+.nok-small {
+  background-color: #F44336;
+  border: none;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 160px;
+  height: 90px;
+}
+
+.ready-small {
+  background-color: yellow;
+  border: none;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 160px;
+  height: 90px;
+}
+
 
 /* Create two unequal columns that floats next to each other */
 /* Left column */
