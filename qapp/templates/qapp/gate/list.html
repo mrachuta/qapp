@@ -40,7 +40,7 @@
                 {% endif %}
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.area }}</a></td>
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.operation_no }}</a></td>
-                <td><a href="{{ gate.get_absolute_url }}">{{ gate.name }}</a></td>
+                <td class="gate-name"><a href="{{ gate.get_absolute_url }}">{{ gate.name }}</a></td>
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.get_status_display }}</a></td>
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.rating|default:"---" }}</a></td>
                 <td class="center">
