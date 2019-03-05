@@ -252,14 +252,22 @@ a {
 
 /* Addfile button and status div (for comments) */
 
-.add-file {
-    display: block;
+.upload-buttons-area,
+.upload-status-area,
+.action-buttons-area {
     width: 100%;
+    height: 100px;
 }
 
 .upload-status {
+    word-wrap: break-word;
+    float: left;
+    width: 160px;
+    height: 90px;
+    position: relative;
     display: block;
-    padding: 10px;
+    text-align: center;
+    margin: 4px 2px;
 }
 
 /* Buttons styling */
@@ -268,8 +276,10 @@ input[type="file"] {
     display: none;
 }
 
-.upload-file {
-  display: inline-block;
+.upload-button {
+  float: left;
+  display: block;
+  padding-top: 0px;
   background-color: #333333;
   border: none;
   color: white;
@@ -283,14 +293,15 @@ input[type="file"] {
   height: 90px;
 }
 
-.ok-small {
+.ok-button {
+  float: left;
   background-color: #4CAF50;
   border: none;
   color: white;
   padding: 20px;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
+  display: block;
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
@@ -298,14 +309,15 @@ input[type="file"] {
   height: 90px;
 }
 
-.nok-small {
+.nok-button {
+  float: left;
   background-color: #F44336;
   border: none;
   color: white;
   padding: 20px;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
+  display: block;
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
@@ -313,21 +325,22 @@ input[type="file"] {
   height: 90px;
 }
 
-.ready-small {
-  background-color: yellow;
+.ready-button {
+  float: left;
+  background-color: #E0D20B;
   border: none;
-  color: white;
+  color: black;
   padding: 20px;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
+  position: relative;
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
   width: 160px;
   height: 90px;
+  display: block;
 }
-
 
 /* Create two unequal columns that floats next to each other */
 /* Left column */

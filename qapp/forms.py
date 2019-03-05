@@ -1,9 +1,10 @@
 from django import forms
-from .models import Gate, Comment, CommentFile, GateFile, Tram, Bogie
+from .models import Gate, Comment, CommentFile, GateFile, Tram, Bogie, OperationArea
 from django.forms import inlineformset_factory
 from re import search
 from django.core.validators import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 
 def validate_op_no(op_no):
@@ -41,6 +42,7 @@ class GateAddForm(forms.ModelForm):
             'type',
             'car',
             'area',
+            'responsible',
             'name',
             'operation_no',
             'content',
@@ -54,6 +56,7 @@ class GateAddForm(forms.ModelForm):
             'bogie': u'Wózek',
             'car': u'Człon',
             'area': u'Obszar',
+            'responsible': u'Odpowiedzialny',
             'name': u'Nazwa',
             'operation_no': u'Numer operacji',
             'content': u'Zawartość',
@@ -73,6 +76,7 @@ class GateAddForm(forms.ModelForm):
         'car',
         'bogie',
         'area',
+        'responsible',
         'operation_no',
         'name',
         'content',
@@ -90,6 +94,10 @@ class GateAddForm(forms.ModelForm):
         self.fields['operation_no'].min_length = 6
         self.fields['operation_no'].label = u'Numer operacji'
         self.fields['operation_no'].widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
+        self.fields['responsible'].choices = [
+            (user.pk, f'{user.last_name} {user.first_name} ({user.username})')
+            for user in User.objects.all().order_by('last_name')
+        ]
 
     def clean(self):
 
@@ -119,6 +127,12 @@ class GateAddForm(forms.ModelForm):
         """
 
         validate_op_no(self.cleaned_data['operation_no'])
+
+        # If responsible person is not selected, add foreman as responsible
+
+        if not self.cleaned_data['responsible']:
+            foreman = OperationArea.objects.get(area=self.cleaned_data['area']).foreman
+            self.cleaned_data['responsible'] = foreman
 
         errors_list = []
 
@@ -187,7 +201,7 @@ class CommentFileAddForm(forms.ModelForm):
             'file': u'Plik'
         }
         widgets = {
-            'file': forms.FileInput(attrs={'class': 'upload-file', 'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'})
+            'file': forms.FileInput(attrs={'class': 'upload-file', 'accept': 'image/*;capture-camera', 'onchange': 'CatchFile(this)'})
         }
 
 
@@ -204,7 +218,7 @@ class CommentAddForm(forms.ModelForm):
             'text': u'Komentarz',
         }
         widgets = {
-            'text': forms.Textarea(attrs={'placeholder': u'Wpisz opcjonalny komentarz'})
+            'text': forms.Textarea(attrs={'placeholder': u'Wpisz opcjonalny komentarz', 'style': 'margin: 0px; width: 500px; height: 210px;'})
         }
 
 
@@ -219,6 +233,7 @@ class GateChangeForm(forms.ModelForm):
             'bogie',
             'car',
             'area',
+            'responsible',
             'name',
             'content',
             'operation_no',
@@ -232,6 +247,7 @@ class GateChangeForm(forms.ModelForm):
             'bogie': u'Wózek',
             'car': u'Człon',
             'area': u'Obszar',
+            'responsible': u'Odpowiedzialny',
             'name': u'Nazwa',
             'operation_no': u'Numer operacji',
             'content': u'Zawartość',
@@ -252,6 +268,7 @@ class GateChangeForm(forms.ModelForm):
         }
 
         field_order = [
+            'responsible',
             'operation_no',
             'name',
             'content',
@@ -263,10 +280,18 @@ class GateChangeForm(forms.ModelForm):
         self.fields['tram'].required = False
         self.fields['car'].required = False
         self.fields['bogie'].required = False
+        self.fields['responsible'].choices = [
+            (user.pk, f'{user.last_name} {user.first_name} ({user.username})')
+            for user in User.objects.all().order_by('last_name')
+        ]
 
     def clean(self):
 
         validate_op_no(self.cleaned_data['operation_no'])
+
+        if not self.cleaned_data['responsible']:
+            foreman = OperationArea.objects.get(area=self.cleaned_data['area']).foreman
+            self.cleaned_data['responsible'] = foreman
 
         curr_ob = Gate.objects.get(pk=self.instance.pk)
 

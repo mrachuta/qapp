@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Tram, OperationArea, Gate, Comment, Log, GateFile, Bogie
+from .models import Tram, OperationArea, Gate, Comment, Log, GateFile, Bogie, CommentFile
 
 
 class TramAdmin(admin.ModelAdmin):
+
     list_display = ('number', 'manufactured_date')
 
 
@@ -10,23 +11,32 @@ admin.site.register(Tram, TramAdmin)
 
 
 class BogieAdmin(admin.ModelAdmin):
+
     list_display = ('number', 'manufactured_date', 'btype')
 
 
 admin.site.register(Bogie, BogieAdmin)
 
-admin.site.register(OperationArea)
+
+class OperationAreaAdmin(admin.ModelAdmin):
+
+    list_display = ('area', 'foreman')
+
+
+admin.site.register(OperationArea, OperationAreaAdmin)
 
 
 class GateFileToGateAdmin(admin.TabularInline):
+
     model = GateFile
     extra = 0
 
 
 class GateAdmin(admin.ModelAdmin):
 
-    list_display = ('tram', 'bogie', 'car', 'area', 'operation_no',)
+    list_display = ('id', 'tram', 'bogie', 'car', 'area', 'operation_no', 'name')
     inlines = [GateFileToGateAdmin]
+    ordering = ('-tram', '-bogie')
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'author', None) is None:
@@ -37,11 +47,24 @@ class GateAdmin(admin.ModelAdmin):
 admin.site.register(Gate, GateAdmin)
 
 
+class CommentFileToCommentAdmin(admin.TabularInline):
+    model = CommentFile
+    extra = 0
+
+
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('com_rel_gate', 'text', 'date_time', )
+
+    list_display = ('id', 'com_rel_gate', 'text', 'date_time', )
+    inlines = [CommentFileToCommentAdmin]
     ordering = ('-date_time', )
 
 
 admin.site.register(Comment, CommentAdmin)
 
-admin.site.register(Log)
+
+class LogAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'log_rel_gate', 'date_time', 'author', 'action')
+
+
+admin.site.register(Log, LogAdmin)

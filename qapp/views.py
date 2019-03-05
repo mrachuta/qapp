@@ -10,6 +10,14 @@ from django.utils import timezone
 import pytz
 from .filters import GateFilter
 from django.core.validators import ValidationError
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+
+# Test for decorator
+def is_member(user):
+    return user.groups.filter(name='dzj').exists()
 
 
 def log_date_time(**kwargs):
@@ -155,7 +163,7 @@ class DetailView(generic.DetailView):
         context['comment_formset'] = CommentFileAddFormSet(None)
         return context
 
-
+@login_required
 def gate_update(request, pk):
 
     log_messages = {}
@@ -222,7 +230,8 @@ def gate_update(request, pk):
                       )
 
 
-class LogView(generic.DetailView):
+
+class LogView(LoginRequiredMixin, generic.DetailView):
 
     model = Gate
     template_name = 'qapp/gate/log.html'
@@ -231,6 +240,8 @@ class LogView(generic.DetailView):
         return get_object_or_404(Gate, pk=self.kwargs['pk'])
 
 
+@login_required
+@user_passes_test(is_member)
 def gate_add(request):
 
     log_messages = {}
@@ -332,7 +343,7 @@ def gate_add(request):
                       )
 
 
-class MyGates(generic.ListView):
+class MyGates(LoginRequiredMixin, generic.ListView):
 
     template_name = 'qapp/gate/mygates.html'
     context_object_name = 'user_gates'
@@ -352,7 +363,7 @@ class MyGates(generic.ListView):
                                          )
         else:
             self.user_gates = GateFilter(self.request.GET, queryset=Gate.objects.all().
-                                         filter(area__responsible=self.request.user).
+                                         filter(responsible=self.request.user).
                                          order_by('rating', 'tram')
                                          )
         return self.user_gates.qs.distinct()
@@ -363,6 +374,8 @@ class MyGates(generic.ListView):
         return context
 
 
+@login_required
+@user_passes_test(is_member)
 def gate_edit(request, pk):
     log_messages = {}
     gate = get_object_or_404(Gate, pk=pk)
@@ -404,9 +417,9 @@ def gate_edit(request, pk):
         }
                       )
 
-
+@login_required
+@user_passes_test(is_member)
 def mass_update(request):
-
     log_messages = {}
     if request.method == "POST":
         for key, value in request.POST.items():

@@ -38,8 +38,8 @@
             <td>{{ gate.area }} ({{ gate.area.get_area_display }})</td>
         </tr>
         <tr>
-            <td>Brygadzista:</td>
-            <td>{{ gate.area.responsible.first_name }} {{ gate.area.responsible.last_name }} ({{ gate.area.responsible }})</td>
+            <td>Odpowiedzialny:</td>
+            <td>{{ gate.responsible.last_name }} {{ gate.responsible.first_name }} ({{ gate.responsible }})</td>
         </tr>
 
         {% if gate.type == 'BJW' or gate.type == 'BJC' %}
@@ -93,7 +93,7 @@
 <div class="card" id="gate_{{ gate.id}}_form">
     <form action="{% url 'qapp:update' gate.pk %}" method="post" enctype="multipart/form-data" onsubmit="return ValidateForm();">
         {% csrf_token %}
-        {% if request.user|dzj_member or request.user == gate.area.responsible %}
+        {% if request.user|dzj_member or request.user == gate.responsible %}
         {% for field in comment_form %}
         {{ field.label_tag }}
         <br>
@@ -103,24 +103,28 @@
         {{ comment_formset.management_form }}
         Dodaj opcjonalne pliki:
         <br>
+        <div class="upload-buttons-area" id="upload_buttons_area">
         {% for form in comment_formset %}
         {% for field in form.visible_fields %}
-        <label class="upload-file">
-        Wybierz plik!{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
-        </label>
+            <label class="upload-button" id="label_{{ field.auto_id }}">
+            Wybierz plik!{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font>
+            </label>
         {% endfor %}
         {% endfor %}
+        </div>
+        <div class="action-buttons-area" id="action_buttons_area">
         {% if gate.status == 'R' or gate.status == 'P' %}
-        <button class="ready-small" name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
-        {% endif %}
+        <button class="ready-button" name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
         {% endif %}
         {% if request.user|dzj_member and gate.status == 'O' %}
         <div class="fastaction">
             <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
             <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
         </div>
-        <button class="ok-small" name="new_rating" type="submit" value="OK">Akceptuj</button>
-        <button class="nok-small" name="new_rating" type="submit" value="NOK">Odrzuć</button>
+        <button class="ok-button" name="new_rating" type="submit" value="OK">Akceptuj</button>
+        <button class="nok-button" name="new_rating" type="submit" value="NOK">Odrzuć</button>
+        {% endif %}
+        </div>
         {% endif %}
     </form>
     <br>

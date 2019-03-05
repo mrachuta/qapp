@@ -96,7 +96,7 @@ class OperationArea(models.Model):
     )
 
     area = models.CharField(choices=AREAS, max_length=3)
-    responsible = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    foreman = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     objects = models.Manager
 
     def __str__(self):
@@ -137,6 +137,7 @@ class Gate(models.Model):
     bogie = models.ForeignKey(Bogie, null=True, on_delete=models.CASCADE)
     car = models.CharField(choices=CAR_SYMBOLS, max_length=2, null=True)
     area = models.ForeignKey(OperationArea, null=True, on_delete=models.CASCADE)
+    responsible = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     operation_no = models.CharField(max_length=6, null=True)
     name = models.CharField(max_length=200)
     content = models.TextField()
@@ -174,7 +175,7 @@ class GateFile(models.Model):
         return ntpath.basename(self.file.name)
 
     def __str__(self):
-        return u'Załącznik do bramki: {}'.format(self.file)
+        return 'Załącznik do bramki: {}'.format(str(self.file)[10:])
 
 
 class Comment(models.Model):
@@ -197,7 +198,7 @@ class CommentFile(models.Model):
         return ntpath.basename(self.file.name)
 
     def __str__(self):
-        return 'Załącznik do komentarza: {}'.format(self.file)
+        return 'Załącznik do komentarza: {}'.format(str(self.file)[10:])
 
 
 class Log(models.Model):

@@ -40,7 +40,7 @@
         {% endif %}
         <a class="leftlink" href="{% url 'qapp:my_gates' %}">Moje bramki</a>
         <div class="dropdown">
-            <button class="dropbtn">{{ request.user.first_name }} {{ request.user.last_name }} ({{ request.user.username }})</button>
+            <button class="dropbtn">{{ request.user.last_name }} {{ request.user.first_name }} ({{ request.user.username }})</button>
             <div class="dropdown-content">
                 {% if request.user|dzj_member %}
                 <a href="{% url 'qapp:my_gates' %}?operation_no=&status=O">Do oceny: {{ user_gates_count }}</a>
