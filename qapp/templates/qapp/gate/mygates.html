@@ -1,5 +1,6 @@
 {% extends 'qapp/base.html' %}
 {% load user_tags %}
+{% load static %}
 
 {% block title %}QAPP - moje bramki{% endblock%}
 
@@ -18,7 +19,9 @@
             <th>Odpowiedzialny</th>
             <th>Status</th>
             <th>Ocena</th>
+            {% if request.user|dzj_member %}
             <th>Edytuj</th>
+            {% endif %}
         </tr>
         {% for gate in user_gates %}
         <tr class="clickable" id="gate_{{ gate.id }}">
@@ -29,11 +32,21 @@
             <td><a href="{{ gate.get_absolute_url }}">{{ gate.area }}</a></td>
             <td><a href="{{ gate.get_absolute_url }}">{{ gate.operation_no|default_if_none:"-----" }}</a></td>
             <td class="gate-name"><a href="{{ gate.get_absolute_url }}">{{ gate.name }}</a></td>
-            <td><a href="{{ gate.get_absolute_url }}">{{ gate.author }}</a></td>
-            <td><a href="{{ gate.get_absolute_url }}">{{ gate.area.responsible }}</a></td>
+            <td>
+                <a href="{{ gate.get_absolute_url }}">
+                    {{ gate.author.last_name }} {{ gate.author.last_name }} ({{ gate.author.username }})
+                </a>
+            </td>
+            <td>
+                <a href="{{ gate.get_absolute_url }}">
+                    {{ gate.responsible.last_name }} {{ gate.responsible.first_name }} ({{ gate.responsible }})
+                </a>
+            </td>
             <td><a href="{{ gate.get_absolute_url }}">{{ gate.get_status_display }}</a></td>
             <td><a href="{{ gate.get_absolute_url }}">{{ gate.rating|default:"---" }}</a></td>
-            <td class="center"><a href="{% url 'qapp:edit' gate.pk %}">KLIK</a></td>
+            {% if request.user|dzj_member %}
+            <td class="center"><a href="{% url 'qapp:edit' gate.pk %}"><img src="{% static 'img/edit.png' %}"></a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </table>

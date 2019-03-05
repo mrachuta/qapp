@@ -26,7 +26,7 @@ def get_latest_count(request):
                 filter(author=request.user, status='O').order_by('tram').count()
         else:
             user_gates_count = Gate.objects.all().\
-                filter(area__responsible=request.user, status='P').order_by('tram').count()
+                filter(responsible=request.user, status='P').order_by('tram').count()
         return {
             'user_gates_count': user_gates_count
         }
