@@ -95,7 +95,7 @@ class GateAddForm(forms.ModelForm):
         self.fields['operation_no'].label = u'Numer operacji'
         self.fields['operation_no'].widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
         self.fields['responsible'].choices = [
-            (user.pk, f'{user.last_name} {user.first_name} ({user.username})')
+            (user.pk, '{} {} ({})'.format(user.last_name, user.first_name, user.username))
             for user in User.objects.all().order_by('last_name')
         ]
 
@@ -281,7 +281,7 @@ class GateChangeForm(forms.ModelForm):
         self.fields['car'].required = False
         self.fields['bogie'].required = False
         self.fields['responsible'].choices = [
-            (user.pk, f'{user.last_name} {user.first_name} ({user.username})')
+            (user.pk, '{} {} ({})'.format(user.last_name, user.first_name, user.username))
             for user in User.objects.all().order_by('last_name')
         ]
 
