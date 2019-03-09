@@ -1,26 +1,26 @@
+from .models import Gate, Tram
+from .filters import GateFilter
+from django.views import generic
+from django.utils import timezone
+from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from .models import Gate
-from django.views import generic
-from .forms import GateAddForm, GateFileAddFormSet, CommentAddForm, CommentFileAddFormSet, GateChangeForm, GateFileChangeFormSet
-from django.db import IntegrityError
-#from datetime import datetime
-#import time
-from django.utils import timezone
-import pytz
-from .filters import GateFilter
 from django.core.validators import ValidationError
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import (GateAddForm, GateFileAddFormSet, CommentAddForm, CommentFileAddFormSet, GateChangeForm,
+                    GateFileChangeFormSet, GateChangeStatusMobile)
 
 
+def is_dzj_member(user):
 
-# Test for decorator
-def is_member(user):
+    # Test for decorator
     return user.groups.filter(name='dzj').exists()
 
 
 def log_date_time(**kwargs):
+
     if kwargs == {'format': 'yes'}:
         return timezone.now().strftime("%Y-%m-%d %H:%M:%S.%f")
     else:
@@ -38,7 +38,6 @@ def generate_log(curr_user, pk, log_dict, gate, category, action, *args):
     :param category: 'S' (sucess) or 'E' (error),
     :param action: type of action to log; value from act_type dictionary,
     :param args: optional argument with for example new value (see act_type dictionary)
-
     """
 
     if args:
@@ -78,7 +77,6 @@ def change_rating(gate, value):
 
     :param gate: gate object, which will be changed,
     :param value: 'OK' when gate could be accepted, 'P' if gate have to be corrected.
-
     """
 
     if value == 'OK':
@@ -95,13 +93,11 @@ def change_rating(gate, value):
 
 def change_status(gate, value):
 
-    """
-    Function change gate status (gate.status can be set as 'O' for receive an rating).
+    """Function change gate status (gate.status can be set as 'O' for receive an rating).
     Allow to change gate status to 'O' (ready to inspection). After set this status, rating is cleaned.
 
     :param gate: gate object, which will be changed,
     :param value: usually 'O'.
-
     """
 
     gate.status = value
@@ -115,8 +111,7 @@ def index(request):
 
 class GateListView(generic.ListView):
 
-    """
-    Universal ListView for all types of Gate object.
+    """Universal ListView for all types of Gate object.
     Necessary to specify Gate.type in parameters delivered to class (see urls.py for app).
     For keeping compatibility with django-filter addon, methods get_queryset and get_context_data had to be override.
     (filtered data instead original queryset result have to be delivered to template).
@@ -162,6 +157,7 @@ class DetailView(generic.DetailView):
         context['comment_form'] = CommentAddForm(None)
         context['comment_formset'] = CommentFileAddFormSet(None)
         return context
+
 
 @login_required
 def gate_update(request, pk):
@@ -230,6 +226,52 @@ def gate_update(request, pk):
                       )
 
 
+@login_required
+def gate_change_status_mobile(request, car, operation_no):
+
+    log_messages = {}
+    car = car.upper()
+    operation_no = operation_no.upper()
+    if request.method == 'POST':
+        gate_form = GateChangeStatusMobile(request.POST)
+        if gate_form.is_valid():
+            tram = Tram.objects.get(pk=gate_form.cleaned_data['tram'])
+            car = gate_form.cleaned_data['car']
+            operation_no = gate_form.cleaned_data['operation_no']
+            gate = get_object_or_404(Gate, tram=tram.pk, car=car, operation_no=operation_no)
+            if gate.status == 'O':
+                return HttpResponse(
+                    'Bramka <b>{} {}</b> <i>(id {})</i> na <b>{}</b>, <b>{}</b> oczekuje już na ocenę DZJ!'.format(
+                        operation_no,
+                        gate.name,
+                        gate.id,
+                        tram,
+                        car,
+                    )
+                )
+            gate.status = 'O'
+            gate.save()
+            # Catch log and store in related to Gate, GateLog object
+            log_messages[log_date_time(format='yes')] = [gate.pk, 'S', u'Bramka została zaktualizowana']
+            generate_log(request.user, gate.pk, log_messages, gate, 'S', 'status', 'O')
+            return HttpResponse(
+                'Bramka <b>{} {}</b> <i>(id {})</i> na <b>{}</b>, <b>{}</b> została wysłana do akceptacji DZJ!'.format(
+                        operation_no,
+                        gate.name,
+                        gate.id,
+                        tram,
+                        car,
+                    )
+            )
+    else:
+        gate_form = GateChangeStatusMobile(initial={'car': car, 'operation_no': operation_no})
+        return render(request, 'qapp/gate/change_status_mobile.html', {
+            'operation_no': operation_no,
+            'gate_form': gate_form,
+            'car': car,
+        }
+                      )
+
 
 class LogView(LoginRequiredMixin, generic.DetailView):
 
@@ -241,7 +283,7 @@ class LogView(LoginRequiredMixin, generic.DetailView):
 
 
 @login_required
-@user_passes_test(is_member)
+@user_passes_test(is_dzj_member)
 def gate_add(request):
 
     log_messages = {}
@@ -345,12 +387,11 @@ def gate_add(request):
 
 class MyGates(LoginRequiredMixin, generic.ListView):
 
-    template_name = 'qapp/gate/mygates.html'
+    template_name = 'qapp/gate/my_gates.html'
     context_object_name = 'user_gates'
     paginate_by = 20
 
-    """
-    Customized get_context_data method is connected with django-filter addon.
+    """Customized get_context_data method is connected with django-filter addon.
     See class GateListView(generic.ListView) comment for more informations.
     """
 
@@ -375,8 +416,9 @@ class MyGates(LoginRequiredMixin, generic.ListView):
 
 
 @login_required
-@user_passes_test(is_member)
+@user_passes_test(is_dzj_member)
 def gate_edit(request, pk):
+
     log_messages = {}
     gate = get_object_or_404(Gate, pk=pk)
     # Fields below could be changed on existing model via POST request; rest of model fields are generated as static
@@ -417,9 +459,11 @@ def gate_edit(request, pk):
         }
                       )
 
+
 @login_required
-@user_passes_test(is_member)
+@user_passes_test(is_dzj_member)
 def mass_update(request):
+
     log_messages = {}
     if request.method == "POST":
         for key, value in request.POST.items():

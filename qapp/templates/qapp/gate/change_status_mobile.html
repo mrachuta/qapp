@@ -1,0 +1,63 @@
+<head>
+    <style>
+    /* Table for change status mobile page */
+
+    .csm-table th, td {
+        text-align: left;
+    }
+
+    /* Card for change status mobile page */
+
+    .csm-card {
+        width: 200px;
+        height: 100px
+    }
+
+    /* Buttons styling */
+
+    .status-button {
+       float: left;
+       background-color: #E0D20B;
+       border: none;
+       color: black;
+       padding: 20px;
+       text-align: center;
+       text-decoration: none;
+       position: relative;
+       font-size: 16px;
+       margin: 4px 2px;
+       cursor: pointer;
+       width: 160px;
+       height: 90px;
+       display: block;
+     }
+    </style>
+    <meta charset="UTF-8">
+    <title>QAPP - zmiana statusu</title>
+</head>
+<body>
+    Formularz do akceptacji bramki <b>{{ operation_no }}</b> człon <b>{{ car }}</b>
+    <br>
+    Zalogowany użytkownik: <b>{{ request.user.username }}</b>
+    <br>
+    <br>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="csm-card" id="csm_card">
+            <table class="csm-table" id="csm_table">
+                <tr>
+                    <th>Parametr</th>
+                    <th>Wartość</th>
+                </tr>
+                {% for field in gate_form %}
+                <tr>
+                    <td>{{ field.label_tag }}</td>
+                    <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <button class="status-button" type="submit">Wyślij do akceptacji DZJ</button>
+    </form>
+</body>
+

@@ -5,14 +5,30 @@
 }
 
 body {
-  font-family: Arial;
-  padding: 10px;
-  background: #f1f1f1;
+    font-family: Arial;
+    padding: 10px;
+    background: #F1F1F1;
 }
 
 select[multiple] {
     width: 145px;
 }
+
+input[type=file] {
+    width: 350px;
+    height: 50px;
+}
+
+input[type=submit] {
+    width: 130px;
+    height: 40px;
+}
+
+.standard-button {
+    width: 130px;
+    height: 40px;
+}
+
 
 /* Break long hyperlinks */
 
@@ -24,11 +40,11 @@ a {
 
 /* Index buttons */
 
-.index_button {
+.index-button {
 	background-color: #333333;
 	display: inline-block;
 	cursor: pointer;
-	color: #ffffff;
+	color: #FFFFFF;
 	font-family: Arial;
 	font-size: 28px;
 	font-weight: bold;
@@ -42,14 +58,14 @@ a {
     border-width: 1px;
 	border-color: #333333;
 }
-.index_button:hover {
+.index-button:hover {
 	color: #000000;
-	background-color: #dddddd;
+	background-color: #DDDDDD;
 	border-style: solid;
     border-width: 1px;
 	border-color: #333333;
 }
-.index_button:active {
+.index-button:active {
 	position:relative;
 	top:1px;
 }
@@ -59,27 +75,27 @@ a {
 /* Table */
 
 .wp-table tr:nth-child(odd) {
-    background-color: #fff;
+    background-color: #FFFFFF;
 }
 
 .wp-table tr:nth-child(even) {
-    background-color: #f1f1f1;
+    background-color: #F1F1F1;
 }
 
 .wp-table tr {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #DDDDDD;
 }
 
 .wp-table tr.clickable a {
     display: block;
-    color: black !important;
+    color: black;
     text-decoration: none;
 }
 
 .wp-table tr.clickable:hover,
 .wp-table tr.clickable:hover a {
-    background-color: #333;
-    color: white !important;
+    background-color: #333333;
+    color: white;
     text-decoration: none;
 }
 
@@ -101,8 +117,8 @@ a {
 }
 
 .wp-table {
-    font-size: 15px!important;
-    border: 1px solid #ccc;
+    font-size: 15px;
+    border: 1px solid #CCCCCC;
     border-collapse: collapse;
     border-spacing: 50px 0;
     width: 100%;
@@ -123,115 +139,116 @@ a {
     font-style: italic;
 }
 
-
 /* End of Table */
 
 /* Header/Blog Title */
 
 .header {
-  padding: 6px;
-  text-align: center;
-  background: white;
-  background: url(../img/jamnik_ed.png), url(../img/tram_ed.png);
-  background-size: 200px;
-  background-repeat: no-repeat;
-  background-position: left top, right top;
-  background-color: white;
+    padding: 6px;
+    text-align: center;
+    background: white;
+    background: url(../img/jamnik_ed.png), url(../img/tram_ed.png);
+    background-size: 200px;
+    background-repeat: no-repeat;
+    background-position: left top, right top;
+    background-color: white;
 }
 
 .header h1 {
-  font-size: 45px;
+    font-size: 45px;
 }
 
 .navbar {
-  overflow: hidden;
-  background-color: #333333;
+    overflow: hidden;
+    background-color: #333333;
 }
 
 .navbar a {
-  float: left;
-  font-size: 16px;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
+    float: left;
+    font-size: 16px;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
 }
 
 .dropdown {
-  float: right;
-  overflow: hidden;
+    float: right;
+    overflow: hidden;
 }
 
 .dropdown .dropbtn {
-  font-size: 16px;
-  border: none;
-  outline: none;
-  color: white;
-  padding: 14px 16px;
-  background-color: inherit;
-  font-family: inherit;
-  margin: 0;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
 }
 
 .navbar a:hover, .dropdown:hover .dropbtn {
-  background-color: #dddddd;
-  color: #000000;
+    background-color: #DDDDDD;
+    color: #000000;
 }
 
 .dropdown-content {
-  display: none;
-  position: absolute;
-  right: 18px;
-  background-color: #333333;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+    display: none;
+    position: absolute;
+    right: 18px;
+    background-color: #333333;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
 }
 
 .dropdown-content a {
-  float: none;
-  color: white;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
 }
 
 .dropdown-content a:hover {
-  background-color: #ddd;
+    background-color: #DDDDDD;
 }
 
 .dropdown:hover .dropdown-content {
-  display: block;
+    display: block;
 }
 
 /* Fast action */
 
-.fastaction button {
-  position: fixed;
-  right: -180px;
-  transition: 0.3s;
-  padding: 15px;
-  width: 270px;
-  height: 130px;
-  text-decoration: none;
-  font-size: 20px;
-  color: white;
-  border-radius: 0 5px 5px 0;
+.ok-button-long,
+.nok-button-long {
+    position: fixed;
+    right: -180px;
+    transition: 0.3s;
+    padding: 15px;
+    width: 270px;
+    height: 130px;
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    border-radius: 0 5px 5px 0;
 }
 
-.fastaction button:hover {
-  right: -5px;
+.ok-button-long:hover,
+.nok-button-long:hover {
+    right: -5px;
 }
 
-#ok {
-  top: 270px;
-  background-color: #4CAF50;
+.ok-button-long {
+    top: 270px;
+    background-color: #4CAF50;
 }
 
-#nok {
-  top: 410px;
-  background-color: #F44336;
-  }
+.nok-button-long {
+    top: 410px;
+    background-color: #F44336;
+}
 
 /* File icon */
 
@@ -272,147 +289,234 @@ a {
 
 /* Buttons styling */
 
-input[type="file"] {
+.upload-buttons-area input[type="file"] {
     display: none;
 }
 
 .upload-button {
-  float: left;
-  display: block;
-  padding-top: 0px;
-  background-color: #333333;
-  border: none;
-  color: white;
-  text-align: center;
-  padding: 35px 0px 35px 0px;
-  text-decoration: none;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  width: 160px;
-  height: 90px;
+    float: left;
+    display: block;
+    padding-top: 0px;
+    background-color: #333333;
+    border: none;
+    color: white;
+    padding-top: 35px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 160px;
+    height: 90px;
 }
 
 .ok-button {
-  float: left;
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 20px;
-  text-align: center;
-  text-decoration: none;
-  display: block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  width: 160px;
-  height: 90px;
+    float: left;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 160px;
+    height: 90px;
 }
 
 .nok-button {
-  float: left;
-  background-color: #F44336;
-  border: none;
-  color: white;
-  padding: 20px;
-  text-align: center;
-  text-decoration: none;
-  display: block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  width: 160px;
-  height: 90px;
+    float: left;
+    background-color: #F44336;
+    border: none;
+    color: white;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 160px;
+    height: 90px;
 }
 
-.ready-button {
-  float: left;
-  background-color: #E0D20B;
-  border: none;
-  color: black;
-  padding: 20px;
-  text-align: center;
-  text-decoration: none;
-  position: relative;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  width: 160px;
-  height: 90px;
-  display: block;
+.status-button {
+    float: left;
+    background-color: #E0D20B;
+    border: none;
+    color: black;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+    position: relative;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 160px;
+    height: 90px;
+    display: block;
 }
 
 /* Create two unequal columns that floats next to each other */
 /* Left column */
-.leftcolumn {
-  float: left;
-  width: 75%;
 
+.leftcolumn {
+    float: left;
+    width: 75%;
 }
 
 /* Right column */
+
 .rightcolumn {
-  float: left;
-  width: 25%;
-  background-color: #f1f1f1;
-  padding-left: 20px;
+    float: left;
+    width: 25%;
+    background-color: #F1F1F1;
+    padding-left: 20px;
 }
 
 /* Fake image */
+
 .fakeimg {
-  background-color: #aaa;
-  width: 100%;
-  padding: 20px;
+    background-color: #AAAAAA;
+    width: 100%;
+    padding: 20px;
 }
 
 /* Add a card effect for articles */
+
 .card {
-  background-color: white;
-  padding: 20px;
-  margin-top: 20px;
+    background-color: #FFFFFF;
+    padding: 20px;
+    margin-top: 20px;
 }
 
 /* Clear floats after the columns */
+
 .row:after {
-  content: "";
-  display: table;
-  clear: both;
+    content: "";
+    display: table;
+    clear: both;
 }
 
 /* Footer */
+
 .footer {
-  padding: 20px;
-  text-align: center;
-  background: #ddd;
-  margin-top: 20px;
+padding: 20px;
+    text-align: center;
+    background: #DDDDDD;
+    margin-top: 20px;
 }
 
 /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 1080px) {
-  .leftcolumn, .rightcolumn {
-    width: 100%;
-    padding: 0;
-  }
-  .wp-table {
-    width: 90%;
-  }
-  .fastaction button {
-  right: -220px;
-  width: 350px;
-  }
-}
 
-/* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
-@media screen and (max-width: 400px) {
-  .topnav a {
-    float: none;
-    width: 100%;
-  }
-   .wp-table {
-    width: 90%;
-  }
-  .fastaction button {
-  right: -220px;
-  width: 350px;
-  }
+@media screen and (max-width: 1080px) {
+    body {
+        font-size: 26px !important;
+    }
+
+    .dropdown .dropbtn {
+        font-size: 26px;
+    }
+
+    .navbar a {
+        font-size: 26px;
+    }
+
+    .index-button {
+        width: 95%;
+    }
+
+    .standard-button {
+        width: 250px;
+        height: 50px;
+        font-size: 26px;
+    }
+
+    input[type=submit] {
+        width: 250px;
+        height: 50px;
+        font-size: 26px;
+    }
+
+    select {
+        width: 400px;
+        height: 50px;
+        font-size: 26px;
+    }
+
+    select[multiple] {
+        height: 150px;
+        width: 250px;
+        font-size: 26px;
+    }
+
+    input[type=text],
+    input[type=password] {
+        width: 400px;
+        height: 50px;
+        font-size: 26px;
+    }
+
+    textarea {
+        font-size: 26px;
+    }
+
+    .leftcolumn,
+    .rightcolumn {
+        width: 100%;
+        padding: 0;
+    }
+
+    .upload-buttons-area,
+    .upload-status-area,
+    .action-buttons-area {
+        width: 100%;
+        height: 160px;
+    }
+
+    .upload-status {
+        width: 200px;
+        height: 150px;
+    }
+
+    .upload-button,
+    .nok-button,
+    .ok-button,
+    .status-button {
+        font-size: 26px;
+        width: 200px;
+        height: 130px;
+    }
+
+    .upload-button {
+        padding-top: 50px;
+    }
+
+    label {
+        size: 26px;
+    }
+
+    .wp-table {
+        width: 90%;
+        font-size: 26px;
+    }
+
+    .wp-table .checkbox-area {
+        width: 90px;
+        height: 90px;
+    }
+
+    .checkbox-area input[type=checkbox] {
+        margin-top: 40px;
+        transform: scale(2.0);
+    }
+
+    .ok-button-long,
+    .nok-button-long {
+        right: -220px;
+        width: 350px;
+    }
 }

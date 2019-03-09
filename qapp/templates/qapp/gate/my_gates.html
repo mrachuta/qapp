@@ -87,8 +87,8 @@
         {% endfor %}
     </table>
     <hr>
-    <button type="submit">Filtruj</button>
-    <button onclick="location.href='{% url 'qapp:my_gates' %}'" type="button">Resetuj</button>
+    <button type="submit" class="standard-button">Filtruj</button>
+    <button type="button" class="standard-button" onclick="location.href='{% url 'qapp:my_gates' %}'">Resetuj</button>
 </form>
 {% else %}
 Filtrowanie dostępne tylko dla zalogowanych użytkowników!

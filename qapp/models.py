@@ -1,14 +1,13 @@
-from django.db import models
-from datetime import date, datetime
-from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator, ValidationError
-from django.urls import reverse
-import ntpath
-import uuid
 import os
-from django.conf import settings
-from django.utils.deconstruct import deconstructible
+import uuid
+import ntpath
+from datetime import date
+from django.db import models
+from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.utils.deconstruct import deconstructible
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 @deconstructible
