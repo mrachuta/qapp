@@ -4,11 +4,13 @@ from django.conf import settings
 
 register = template.Library()
 
+
 # filter allow to check that user is in group 'dzj'
 @register.filter(name='dzj_member')
 def has_group(user):
     group = Group.objects.get(name='dzj')
     return group in user.groups.all()
+
 
 # filter allow to check that user is in group 'dzj'
 @register.filter(name='prod_member')
@@ -16,9 +18,10 @@ def has_group(user):
     group = Group.objects.get(name='prod')
     return group in user.groups.all()
 
+
 # code found on stackoverflow, description below
 @register.filter(name='data_verbose')
-def data_verbose(boundField):
+def data_verbose(bound_field):
     """
     Returns field's data or it's verbose version
     for a field with choices defined.
@@ -28,14 +31,16 @@ def data_verbose(boundField):
         {% load data_verbose %}
         {{form.some_field|data_verbose}}
     """
-    data = boundField.data
-    field = boundField.field
-    return hasattr(field, 'choices') and dict(field.choices).get(data,'') or data
+    data = bound_field.data
+    field = bound_field.field
+    return hasattr(field, 'choices') and dict(field.choices).get(data, '') or data
+
 
 # filter get attribute of object
 @register.filter
 def get_obj_attr(obj, attr):
     return getattr(obj, attr)
+
 
 # tag allow to paginate filtered results, found on stackoverflow
 @register.simple_tag(takes_context=True)

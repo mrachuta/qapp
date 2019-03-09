@@ -93,7 +93,11 @@
 <div class="card" id="gate_{{ gate.id}}_form">
     <form action="{% url 'qapp:update' gate.pk %}" method="post" enctype="multipart/form-data" onsubmit="return ValidateForm();">
         {% csrf_token %}
-        {% if request.user|dzj_member or request.user == gate.responsible %}
+        {% if gate.status == 'A' %}
+        Nie masz uprawnień do wykonywania akcji dla tej bramki.
+        {% elif request.user == gate.responsible and gate.status == 'O' %}
+        W oczekiwaniu na ocenę DZJ nie możesz wykonywać żadnych akcji.
+        {% elif request.user|dzj_member or request.user == gate.responsible and gate.status != 'A' %}
         {% for field in comment_form %}
         {{ field.label_tag }}
         <br>
@@ -102,6 +106,8 @@
         {% endfor %}
         {{ comment_formset.management_form }}
         Dodaj opcjonalne pliki:
+        <br>
+        (aby zresetować formularz, odśwież stronę)
         <br>
         <div class="upload-buttons-area" id="upload_buttons_area">
         {% for form in comment_formset %}
@@ -114,17 +120,19 @@
         </div>
         <div class="action-buttons-area" id="action_buttons_area">
         {% if gate.status == 'R' or gate.status == 'P' %}
-        <button class="ready-button" name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
+        <button class="status-button" name="new_status" type="submit" value="O">Wyślij do akceptacji DZJ</button>
         {% endif %}
         {% if request.user|dzj_member and gate.status == 'O' %}
-        <div class="fastaction">
-            <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
-            <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
+        <div id="fastaction">
+            <button name="new_rating" type="submit" value="OK" class="ok-button-long">Akceptuj</button>
+            <button name="new_rating" type="submit" value="NOK" class="nok-button-long">Odrzuć</button>
         </div>
         <button class="ok-button" name="new_rating" type="submit" value="OK">Akceptuj</button>
         <button class="nok-button" name="new_rating" type="submit" value="NOK">Odrzuć</button>
         {% endif %}
         </div>
+        {% else %}
+        Nie masz uprawnień do wykonywania akcji dla tej bramki.
         {% endif %}
     </form>
     <br>

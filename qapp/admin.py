@@ -4,7 +4,7 @@ from .models import Tram, OperationArea, Gate, Comment, Log, GateFile, Bogie, Co
 
 class TramAdmin(admin.ModelAdmin):
 
-    list_display = ('number', 'manufactured_date')
+    list_display = ('id', 'number', 'manufactured_date')
 
 
 admin.site.register(Tram, TramAdmin)
@@ -12,7 +12,7 @@ admin.site.register(Tram, TramAdmin)
 
 class BogieAdmin(admin.ModelAdmin):
 
-    list_display = ('number', 'manufactured_date', 'btype')
+    list_display = ('id', 'number', 'manufactured_date', 'btype')
 
 
 admin.site.register(Bogie, BogieAdmin)

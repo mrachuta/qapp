@@ -5,12 +5,12 @@
 
 {% block content %}
 <div class="card" id="gate_{{ gate_type }}_list">
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and request.user|dzj_member %}
     <form action="{% url 'qapp:mass_update' %}" method="post">
         {% csrf_token %}
-        <div class="fastaction">
-            <button name="new_rating" type="submit" value="OK" id="ok">Akceptuj</button>
-            <button name="new_rating" type="submit" value="NOK" id="nok">Odrzuć</button>
+        <div id="fastaction">
+            <button name="new_rating" type="submit" value="OK" class="ok-button-long">Akceptuj</button>
+            <button name="new_rating" type="submit" value="NOK" class="nok-button-long">Odrzuć</button>
         </div>
     {% endif %}
         <table class="wp-table">
@@ -45,7 +45,7 @@
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.rating|default:"---" }}</a></td>
                 <td class="center">
                     <label for="{{ gate.id }}">
-                        <div>
+                        <div class="checkbox-area">
                             <input type="checkbox" id="{{ gate.id }}" name="{{ gate.id }}">
                         </div>
                     </label>
@@ -53,7 +53,7 @@
             </tr>
             {% endfor %}
         </table>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and request.user|dzj_member %}
     </form>
     {% endif %}
     {% if is_paginated %}
@@ -100,8 +100,8 @@
         {% endfor %}
     </table>
     <hr>
-    <button type="submit">Filtruj</button>
-    <button onclick="location.href='{{ request.path }}'" type="button">Resetuj</button>
+    <button type="submit" class="standard-button">Filtruj</button>
+    <button type="button" class="standard-button" onclick="location.href='{{ request.path }}'">Resetuj</button>
 </form>
 {% else %}
 Filtrowanie dostępne tylko dla zalogowanych użytkowników!

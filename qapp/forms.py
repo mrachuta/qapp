@@ -1,10 +1,9 @@
-from django import forms
-from .models import Gate, Comment, CommentFile, GateFile, Tram, Bogie, OperationArea
-from django.forms import inlineformset_factory
 from re import search
-from django.core.validators import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
+from django import forms
 from django.contrib.auth.models import User
+from django.core.validators import ValidationError
+from .models import Gate, Comment, CommentFile, GateFile, Tram, Bogie, OperationArea
+
 
 
 def validate_op_no(op_no):
@@ -23,7 +22,7 @@ class GateFileAddForm(forms.ModelForm):
             'file': u'Plik',
         }
         widgets = {
-            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'ResizeImage(this)'}),
+            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera'}),
         }
 
 
@@ -94,7 +93,7 @@ class GateAddForm(forms.ModelForm):
         self.fields['operation_no'].min_length = 6
         self.fields['operation_no'].label = u'Numer operacji'
         self.fields['operation_no'].widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
-        self.fields['responsible'].choices = [
+        self.fields['responsible'].choices = [(None, '---------')] + [
             (user.pk, '{} {} ({})'.format(user.last_name, user.first_name, user.username))
             for user in User.objects.all().order_by('last_name')
         ]
@@ -201,7 +200,7 @@ class CommentFileAddForm(forms.ModelForm):
             'file': u'Plik'
         }
         widgets = {
-            'file': forms.FileInput(attrs={'class': 'upload-file', 'accept': 'image/*;capture-camera', 'onchange': 'CatchFile(this)'})
+            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'CatchFile(this)'})
         }
 
 
@@ -220,6 +219,29 @@ class CommentAddForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'placeholder': u'Wpisz opcjonalny komentarz', 'style': 'margin: 0px; width: 500px; height: 210px;'})
         }
+
+
+class GateChangeStatusMobile(forms.Form):
+
+    tram = forms.CharField()
+    car = forms.CharField()
+    operation_no = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super(GateChangeStatusMobile, self).__init__(*args, **kwargs)
+        self.fields['tram'].widget = forms.Select(
+            choices=[
+                (tram.pk, tram.number) for tram in Tram.objects.all().order_by('number')
+            ],
+            attrs={
+                'style': 'width:60px;'
+            }
+        )
+        self.fields['tram'].label = 'Tramwaj'
+        self.fields['car'].widget = forms.TextInput(attrs={'readonly': 'readonly', 'size': '5px'})
+        self.fields['car'].label = 'Człon'
+        self.fields['operation_no'].widget = forms.TextInput(attrs={'readonly': 'readonly', 'size': '5px'})
+        self.fields['operation_no'].label = 'Numer operacji'
 
 
 class GateChangeForm(forms.ModelForm):
@@ -280,7 +302,7 @@ class GateChangeForm(forms.ModelForm):
         self.fields['tram'].required = False
         self.fields['car'].required = False
         self.fields['bogie'].required = False
-        self.fields['responsible'].choices = [
+        self.fields['responsible'].choices = [(None, '---------')] + [
             (user.pk, '{} {} ({})'.format(user.last_name, user.first_name, user.username))
             for user in User.objects.all().order_by('last_name')
         ]
@@ -294,6 +316,9 @@ class GateChangeForm(forms.ModelForm):
             self.cleaned_data['responsible'] = foreman
 
         curr_ob = Gate.objects.get(pk=self.instance.pk)
+
+        if curr_ob.status == 'A':
+            raise ValidationError('Nie możesz edytowac bramki ze statusem Archiwum')
 
         req_unique = {
             'BJC': ['type', 'tram', 'car', 'area', 'operation_no'],

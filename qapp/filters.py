@@ -1,7 +1,6 @@
 import django_filters
-from .models import Gate, Tram, OperationArea, Bogie
-from distutils.util import strtobool
 from django import forms
+from .models import Gate, Tram, OperationArea, Bogie
 
 
 class GateFilter(django_filters.FilterSet):

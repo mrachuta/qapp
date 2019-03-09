@@ -1,6 +1,5 @@
-from django.conf.urls import url
-
 from . import views
+from django.conf.urls import url
 
 """
 For using one generic.ListView for all type of gates, is necessary to specify parameter gate_type in as_view method.
@@ -19,5 +18,11 @@ urlpatterns = [
     url(r'^add$', views.gate_add, name='gate_add'),
     url(r'^(?P<pk>[\w-]+)/edit$', views.gate_edit, name='edit'),
     url(r'^mygates$', views.MyGates.as_view(), name='my_gates'),
-    url(r'^massupdate$', views.mass_update, name='mass_update')
+    url(r'^massupdate$', views.mass_update, name='mass_update'),
+    url(
+        r'^csm/(?P<car>\D\d)/(?P<operation_no>\D{2}\d{4})$',
+        views.gate_change_status_mobile,
+        name='gate_change_status_mobile'
+    )
+
 ]
