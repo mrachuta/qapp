@@ -466,6 +466,8 @@ a {
 
     textarea {
         font-size: 26px;
+        resize: none;
+        height: 300px;
     }
 
     .leftcolumn,

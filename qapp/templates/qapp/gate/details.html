@@ -145,7 +145,7 @@
     {% for document in comment.commentfile_set.all %}
     <p><b>Plik: </b><a href="{{ document.file.url }}" target="_blank">{{ document.filename }}</a></p>
     {% endfor %}
-    <p><i><font color="#dddddd">Id komentarza: {{ comment.id }}</font></i></p>
+    <p><i><font color="#DDDDDD">Id komentarza: {{ comment.id }}</font></i></p>
 </div>
 {% endfor %}
 {% endblock %}
@@ -158,7 +158,7 @@
     {% if gate.type == 'BJW' %}
     <li><a href="{% url 'qapp:bjw_list' %}?bogie={{ gate.bogie.pk }}&bogie_type={{ gate.bogie_type }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na wózku {{ gate.bogie }} typ {{ gate.bogie_type }}</a></li>
     {% else %}
-    <li><a href="{% url 'qapp:bjc_list' %}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
+    <li><a href="{% url 'qapp:index' %}{{ gate.type|lower }}?tram={{ gate.tram.pk }}&car={{ gate.car }}&area={{ gate.area.pk }}">Zobacz inne bramki z obszaru {{ gate.area }} na pojeździe {{ gate.tram }} człon {{ gate.car }}</a></li>
     {% endif %}
     <li><a href="{% url 'qapp:log' gate.pk %}" target="_blank">Zobacz log</a></li>
     {% if request.user|dzj_member %}
