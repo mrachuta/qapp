@@ -30,8 +30,6 @@ class GateAddForm(forms.ModelForm):
 
     tram = forms.ModelMultipleChoiceField(queryset=Tram.objects.all(), label=u'Tramwaj')
     bogie = forms.ModelMultipleChoiceField(queryset=Bogie.objects.all(), label=u'Wózek')
-    #operation_no = forms.CharField(max_length=6, min_length=6, label=u'Numer operacji')
-    #operation_no.widget = forms.TextInput(attrs={'size': '5px', 'maxlength': '6'})
 
     class Meta:
 

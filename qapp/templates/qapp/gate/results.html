@@ -7,7 +7,7 @@
     <p>Rezultaty zmian:</p>
     {% for time, info in log_messages.items %}
     {% if info.1 == 'E' %}
-    <p><font color="red">{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</font></p>
+    <p class="error">{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</>
     {% else %}
     <p>{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</p>
     {% endif %}
