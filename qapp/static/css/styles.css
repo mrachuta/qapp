@@ -468,6 +468,7 @@ a {
         font-size: 26px;
         resize: none;
         height: 300px;
+        width: 400px;
     }
 
     .leftcolumn,
@@ -486,6 +487,7 @@ a {
     .upload-status {
         width: 200px;
         height: 150px;
+        font-size: 20px;
     }
 
     .upload-button,
