@@ -195,9 +195,6 @@ def gate_update(request, pk):
                                 a.file_rel_comment = comment
                                 a.save()
                                 generate_log(request.user, pk, log_messages, gate, 'S', 'file')
-                                # Sleep for a moment, to generate log with different time for each file.
-                                # Without this, every file have the same time of adding in log.
-                                #time.sleep(0.1)
                 except IntegrityError:
                     log_messages[log_date_time(format='yes')] = [pk, 'E', u'Bramka nie została zaktualizowana']
             log_messages[log_date_time(format='yes')] = [pk, 'S', u'Bramka została zaktualizowana']
@@ -251,7 +248,7 @@ def gate_change_status_mobile(request, car, operation_no):
                 )
             gate.status = 'O'
             gate.save()
-            # Catch log and store in related to Gate, GateLog object
+            # Catch log and store in related to Gate, GateLog object.
             log_messages[log_date_time(format='yes')] = [gate.pk, 'S', u'Bramka została zaktualizowana']
             generate_log(request.user, gate.pk, log_messages, gate, 'S', 'status', 'O')
             return HttpResponse(
@@ -264,6 +261,7 @@ def gate_change_status_mobile(request, car, operation_no):
                     )
             )
     else:
+        # If request was not made by POST method, render blank form.
         gate_form = GateChangeStatusMobile(initial={'car': car, 'operation_no': operation_no})
         return render(request, 'qapp/gate/change_status_mobile.html', {
             'operation_no': operation_no,
@@ -387,13 +385,13 @@ def gate_add(request):
 
 class MyGates(LoginRequiredMixin, generic.ListView):
 
-    template_name = 'qapp/gate/my_gates.html'
-    context_object_name = 'user_gates'
-    paginate_by = 20
-
     """Customized get_context_data method is connected with django-filter addon.
     See class GateListView(generic.ListView) comment for more informations.
     """
+
+    template_name = 'qapp/gate/my_gates.html'
+    context_object_name = 'user_gates'
+    paginate_by = 20
 
     def get_queryset(self):
         # Return context_object_name for dzj-group member or for non-members
@@ -421,7 +419,6 @@ def gate_edit(request, pk):
 
     log_messages = {}
     gate = get_object_or_404(Gate, pk=pk)
-    # Fields below could be changed on existing model via POST request; rest of model fields are generated as static
     if request.method == "POST":
         gate_form = GateChangeForm(request.POST, instance=gate)
         gate_formset = GateFileChangeFormSet(request.POST, request.FILES, instance=gate)

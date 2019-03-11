@@ -29,6 +29,9 @@ input[type=submit] {
     height: 40px;
 }
 
+.error {
+    color: #F44336;
+}
 
 /* Break long hyperlinks */
 
@@ -404,7 +407,7 @@ a {
 /* Footer */
 
 .footer {
-padding: 20px;
+    padding: 20px;
     text-align: center;
     background: #DDDDDD;
     margin-top: 20px;
@@ -414,19 +417,20 @@ padding: 20px;
 
 @media screen and (max-width: 1080px) {
     body {
-        font-size: 26px !important;
+        font-size: 30px !important;
     }
 
     .dropdown .dropbtn {
-        font-size: 26px;
+        font-size: 30px;
     }
 
     .navbar a {
-        font-size: 26px;
+        font-size: 30px;
     }
 
     .index-button {
         width: 95%;
+        font-size: 30px;
     }
 
     .standard-button {
@@ -501,16 +505,16 @@ padding: 20px;
 
     .wp-table {
         width: 90%;
-        font-size: 26px;
+        font-size: 18px;
     }
 
     .wp-table .checkbox-area {
-        width: 90px;
-        height: 90px;
+        width: 50px;
+        height: 50px;
     }
 
     .checkbox-area input[type=checkbox] {
-        margin-top: 40px;
+        margin-top: 20px;
         transform: scale(2.0);
     }
 

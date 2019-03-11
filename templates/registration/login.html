@@ -5,12 +5,14 @@
 
 <div class="card">
   {% if form.errors %}
-    <p>Login lub hasło nie są prawidłowe.</p>
+    <p class="error">Login lub hasło nie są prawidłowe.</p>
   {% endif %}
   {% if next %}
     {% if user.is_authenticated %}
-      <p>Twoje konto nie ma dostępu do tej strony.
-        Aby przejść dalej, zaloguj się kontem posiadający dostęp do żądanych zasobów</p>
+      <p class="error">
+        Twoje konto nie ma dostępu do tej strony.
+        Aby przejść dalej, zaloguj się kontem posiadający dostęp do żądanych zasobów
+      </p>
     {% else %}
       <p>Zaloguj się, aby przejść do żądanych zasobów.</p>
     {% endif %}

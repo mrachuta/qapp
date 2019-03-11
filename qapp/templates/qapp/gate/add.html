@@ -10,14 +10,16 @@
         <p>Rezultaty zmian:</p>
         {% for time, info in log_messages.items %}
         {% if info.1 == 'E' %}
-        <p><font color="red">{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</font></p>
+        <p class="error">{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</>
         {% else %}
         <p>{{ time }} {{ info.1 }}: {{ info.0 }} {{ info.2 }}</p>
         {% endif %}
         {% endfor %}
         {% endif %}
         {% for error in gate_form.non_field_errors %}
-        <font color="red">Błąd: {{ error }}</font><br><br>
+        <p class="error">Błąd: {{ error }}</p>
+        <br>
+        <br>
         {% endfor %}
         <table class="wp-table">
             <tr>
@@ -28,12 +30,12 @@
             {% if field.name != 'author' %}
             <tr>
                 <td>{{ field.label_tag }}</td>
-                <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+                <td>{% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}</td>
             </tr>
             {% else %}
             <tr>
                 <td>{{ field.label_tag }}</td>
-                <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ request.user.username }}{{ field }}</font></td>
+                <td>{% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ request.user.username }}{{ field }}</td>
             </tr>
             {% endif %}
             {% endfor %}
@@ -42,7 +44,7 @@
             {% for field in form.visible_fields %}
             <tr>
                 <td>{{ field.label_tag }}</td>
-                <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+                <td>{% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}</td>
             </tr>
             {% endfor %}
             {% endfor %}

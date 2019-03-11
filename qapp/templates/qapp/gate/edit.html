@@ -8,10 +8,14 @@
     <form method="POST" class="post-form" enctype="multipart/form-data">
         {%csrf_token%}
         {% for error in gate_form.non_field_errors %}
-        <font color="red">Błąd: {{ error }}</font><br><br>
+        <p class="error">Błąd: {{ error }}</p>
+        <br>
+        <br>
         {% endfor %}
         {% for error in gate_formset.non_field_errors %}
-        <font color="red">Błąd: {{ error }}</font><br><br>
+        <p class="error">Błąd: {{ error }}</p>
+        <br>
+        <br>
         {% endfor %}
         <table class="wp-table">
             <tr>
@@ -35,7 +39,7 @@
             {% else %}
             <tr>
                 <td>{{ field.label_tag }}</td>
-                <td>{% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+                <td>{% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}</td>
             </tr>
             {% endif %}
             {% endfor %}
@@ -50,7 +54,7 @@
             {% for field in form.visible_fields %}
             <tr>
                 <td>{{ field.label_tag }}</td>
-                <td>{% if field.errors %} <font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+                <td>{% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}</td>
             </tr>
             {% endfor %}
             {% for hidden in form.hidden_fields %}

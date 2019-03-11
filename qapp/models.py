@@ -132,9 +132,9 @@ class Gate(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     type = models.CharField(choices=GATE_TYPE, default='BJC', max_length=3)
-    tram = models.ForeignKey(Tram, null=True, on_delete=models.CASCADE)
-    bogie = models.ForeignKey(Bogie, null=True, on_delete=models.CASCADE)
-    car = models.CharField(choices=CAR_SYMBOLS, max_length=2, null=True)
+    tram = models.ForeignKey(Tram, null=True, blank=True, on_delete=models.CASCADE)
+    bogie = models.ForeignKey(Bogie, null=True, blank=True, on_delete=models.CASCADE)
+    car = models.CharField(choices=CAR_SYMBOLS, max_length=2, null=True, blank=True,)
     area = models.ForeignKey(OperationArea, null=True, on_delete=models.CASCADE)
     responsible = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     operation_no = models.CharField(max_length=6, null=True)

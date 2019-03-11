@@ -1,19 +1,30 @@
 <head>
     <style>
-    /* Table for change status mobile page */
+    body {
+        font-size: 40px;
+    }
+
+    .csm-card {
+        width: 400px;
+        height: 300px;
+    }
+
+    .csm-table {
+        width: 100%;
+        display: block;
+    }
 
     .csm-table th, td {
         text-align: left;
-    }
-
-    /* Card for change status mobile page */
-
-    .csm-card {
+        font-size: 40px;
         width: 200px;
-        height: 100px
     }
 
-    /* Buttons styling */
+    select,
+    input {
+        transform: scale(2.0);
+        margin-left: 30px;
+    }
 
     .status-button {
        float: left;
@@ -24,11 +35,11 @@
        text-align: center;
        text-decoration: none;
        position: relative;
-       font-size: 16px;
+       font-size: 40px;
        margin: 4px 2px;
        cursor: pointer;
-       width: 160px;
-       height: 90px;
+       width: 260px;
+       height: 180px;
        display: block;
      }
     </style>
@@ -52,7 +63,7 @@
                 {% for field in gate_form %}
                 <tr>
                     <td>{{ field.label_tag }}</td>
-                    <td>{% if field.errors %}<font color="red">{{ field.errors }}{% endif %}{{ field }}</font></td>
+                    <td>{% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}</td>
                 </tr>
                 {% endfor %}
             </table>
