@@ -79,9 +79,11 @@ for tesing on localhost:
 1. Clone git repo to localhost.
 2. Install required packages.
 3. Create file *secrets* in the same directory as settings.py, with following data (without < and >):
-```
-<secret_key>
-```
+    ```
+    <secret_key>
+    ```
+4. Initiate as standard Django-app (superuser, database, migrations etc)
+
 This is sufficient to run Django developer server.  
 If you will try to set server as production environment, uWSGI is recommended.
 
