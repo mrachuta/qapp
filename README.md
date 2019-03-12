@@ -86,11 +86,11 @@ This is sufficient to run Django developer server.
 If you will try to set server as production environment, uWSGI is recommended.
 
 
-##Using
+## Using
 
 Clear interface is available. You need to login first.
 Access to admin: add /admin after root path.
 
-##Thanks
+## Thanks
 
 As always to my girlfriend!
