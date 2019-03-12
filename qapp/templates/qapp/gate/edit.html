@@ -6,7 +6,7 @@
 {% block content %}
 <div class="card" id="gate_{{ gate.id }}_edit">
     <form method="POST" class="post-form" enctype="multipart/form-data">
-        {%csrf_token%}
+        {% csrf_token %}
         {% for error in gate_form.non_field_errors %}
         <p class="error">Błąd: {{ error }}</p>
         <br>
