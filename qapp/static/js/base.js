@@ -38,7 +38,7 @@ function CatchFile(obj) {
     // If first, draw a div for showing status
     var uploadStatusDiv = document.getElementById('upload_status_area');
 
-    if (!uploadStatusDiv) {
+    if (!uploadStatusDiv && uploadButtonsDiv) {
         var uploadStatusDiv = document.createElement('div');
         uploadStatusDiv.setAttribute('class', 'upload-status-area');
         uploadStatusDiv.setAttribute('id', 'upload_status_area');
@@ -54,8 +54,8 @@ function CatchFile(obj) {
     }
 
     var canvasDiv = document.getElementById('canvas-area');
-    var currField = document.getElementById(obj.id);
-    var currFieldLabel = document.getElementById(('label_' + obj.id));
+    // var currField = document.getElementById(obj.id);
+    // var currFieldLabel = document.getElementById(('label_' + obj.id));
 
     // Main image-converting procedure
     if (imageReg.test(file.name)) {
@@ -65,6 +65,10 @@ function CatchFile(obj) {
             const ctx = canvas.getContext('2d')
             const maxWidth = 1600
             const maxHeight = 1200
+
+            document.getElementById(('upload_status_' + obj.id)).innerHTML =
+            '<font color="#F44336">Konwertowanie pliku ' + file.name + ' w trakcie...</font>';
+            console.log('Conversion in-progress');
 
             // Calculate new size
             const ratio = Math.min(maxWidth / img.width, maxHeight / img.height)
@@ -93,39 +97,37 @@ function CatchFile(obj) {
                 obj.files = fileList
                 obj.onchange = CatchFile
             }, 'image/jpeg', 0.70)
-        }
-        )
 
-        // If file is image, during conversion show status
-        function ShowConvertConfirmation() {
-            if (document.getElementById('canvas_' + obj.id)) {
-                document.getElementById(('upload_status_' + obj.id)).innerHTML =
-                '<font color="#4CAF50">Konwertowanie pliku ' + file.name + ' zakończone!</font>';
-                return true;
+            // If file is image, during conversion show status
+            function ShowConvertConfirmation() {
+                if (document.getElementById('canvas_' + obj.id)) {
+                    document.getElementById(('upload_status_' + obj.id)).innerHTML =
+                    '<font color="#4CAF50">Konwertowanie pliku ' + file.name + ' zakończone!</font>';
+                    console.log('Conversion finished');
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
-            else {
-                document.getElementById(('upload_status_' + obj.id)).innerHTML =
-                '<font color="#4CAF50">Konwertowanie pliku ' + file.name + ' zakończone!</font>';
-                return false;
-            }
-        }
-
-        // Loop ShowConvertConfirmation function untill return true (file is converted)
-        var convertConfirmationLoop = setInterval(function() {
-            var isConfirmed = ShowConvertConfirmation();
-            if (!isConfirmed) {
-                ShowConvertConfirmation();
-            }
-            else {
-                // Break loop
-                clearInterval(convertConfirmationLoop);
-            }
-        }, 2000); // Check every 2000ms
+            // Loop ShowConvertConfirmation function untill return true (file is converted)
+            var convertConfirmationLoop = setInterval(function() {
+                var isConfirmed = ShowConvertConfirmation();
+                if (!isConfirmed) {
+                    ShowConvertConfirmation();
+                }
+                else {
+                    // Break loop
+                    clearInterval(convertConfirmationLoop);
+                }
+            }, 1000); // Check every 1000ms
+            })
         }
     // If file is not an image, show status with filename
     else {
         document.getElementById(('upload_status_' + obj.id)).innerHTML =
         '<font color="#4CAF50">Dodano plik ' + file.name + '</font>';
         //uploadStatusDiv.append(uploadStatus);
+        console.log('Upload of file finished, not an image')
     }
 }

@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^bjc$', views.GateListView.as_view(gate_type='bjc'), name='bjc_list'),
     url(r'^bjw$', views.GateListView.as_view(gate_type='bjw'), name='bjw_list'),
-    url(r'^iks$', views.GateListView.as_view(gate_type='iks'), name='iks_list'),
+    url(r'^ikw$', views.GateListView.as_view(gate_type='ikw'), name='ikw_list'),
     url(r'^ikk$', views.GateListView.as_view(gate_type='ikk'), name='ikk_list'),
     url(r'^(?P<pk>[\w-]+)/$', views.DetailView.as_view(), name='gate_details'),
     url(r'^(?P<pk>[\w-]+)/update$', views.gate_update, name='update'),

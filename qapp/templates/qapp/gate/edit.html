@@ -19,7 +19,7 @@
         {% endfor %}
         <table class="wp-table">
             <tr>
-                <th>Pole</th>
+                <th class="field-header">Pole</th>
                 <th>Wartość</th>
             </tr>
             {% for field in gate_form %}
@@ -44,18 +44,40 @@
             {% endif %}
             {% endfor %}
             {{ gate_formset.management_form }}
+            <tr>
+                <td class="separator" colspan="2">Sekcja plików</td>
+            </tr>
             {% for form in gate_formset %}
+            <tr>
+                <td>Pole nr {{ forloop.counter }}:</td>
+                <td></td>
+            </tr>
             {% if form.instance.file %}
             <tr>
-                <td>Nazwa pliku</td>
-                <td>{{ form.instance.file }}<td>
+                <td>Aktualnie dodany:</td>
+                <td>
+                    {{ form.instance.filename }}
+                <td>
             </tr>
             {% endif  %}
             {% for field in form.visible_fields %}
+            {% if field.label == 'Plik' %}
             <tr>
-                <td>{{ field.label_tag }}</td>
-                <td>{% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}</td>
+                <td>Zmień/dodaj:</td>
+                <td>
+                    {% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}
+                    <br>
+                    <div class="upload-status-small" id="upload_status_{{ field.auto_id }}"></div>
+                </td>
             </tr>
+            {% else %}
+            <tr>
+                <td>Usuń:</td>
+                <td>
+                    {% if field.errors %}<p class="error">{{ field.errors }}</p>{% endif %}{{ field }}
+                </td>
+            </tr>
+            {% endif %}
             {% endfor %}
             {% for hidden in form.hidden_fields %}
             {{ hidden }}
@@ -65,6 +87,7 @@
         <br>
         <button type="submit" class="standard-button">Zapisz</button>
     </form>
+    <div id="canvas-area" style="overflow: hidden; height: 0;"></div>
 </div>
 {% endblock %}
 

@@ -86,11 +86,11 @@ class OperationArea(models.Model):
         ('TES', u'Testing'),
         ('MWM', u'Montaż wózków - mechanika'),
         ('MWE', u'Montaż wózków - elektryka'),
-        ('ISD', u'Inspekcja końcowa Solaris - dach'),
-        ('ISP', u'Inspekcja końcowa Solaris - podwozie'),
-        ('ISW', u'Inspekcja końcowa Solaris - wnętrzne'),
-        ('ISZ', u'Inspekcja końcowa Solaris - zewnątrz'),
-        ('ISL', u'Inspekcja końcowa Solaris - lakier'),
+        ('IWD', u'Inspekcja końcowa wewnętrzna - dach'),
+        ('IWP', u'Inspekcja końcowa wewnętrzna - podwozie'),
+        ('IWW', u'Inspekcja końcowa wewnętrzna - wnętrzne'),
+        ('IWZ', u'Inspekcja końcowa wewnętrzna - zewnątrz'),
+        ('IWL', u'Inspekcja końcowa wewnętrzna - lakier'),
         ('IKT', u'Inspekcja końcowa klienta - tramwaj')
     )
 
@@ -107,8 +107,8 @@ class Gate(models.Model):
     GATE_TYPE = (
         ('BJC', u'Bramka jakościowa - człon'),
         ('BJW', u'Bramka jakościowa - wózek'),
-        ('IKS', u'Inspekcja końcowa - Solaris'),
-        ('IKK', u'Inspekcja końcowa - klient')
+        ('IKW', u'Inspekcja końcowa - wewnętrzna'),
+        ('IKK', u'Inspekcja końcowa - klient'),
     )
 
     CAR_SYMBOLS = (

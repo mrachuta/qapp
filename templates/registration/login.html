@@ -1,8 +1,6 @@
 {% extends 'qapp/base.html' %}
 
 {% block content %}
-
-
 <div class="card">
   {% if form.errors %}
     <p class="error">Login lub hasło nie są prawidłowe.</p>
@@ -36,9 +34,27 @@
     <input type="hidden" name="next" value="{{ next }}">
   </div>
   </form>
-</div>
-
-{# Assumes you setup the password_reset view in your URLconf #}
+  <br>
+  <br>
+  <!-- NOT TESTED - COMMENTED
+  {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Zapomniałeś hasła?</a></p>
+  -->
+</div>
+{% endblock %}
 
+{% block firstcard %}
+    <h3>Informacje o użytkowniku</h3>
+    <hr>
+    {% if user.is_authenticated %}
+    Zalogowany użytkownik: <b>{{ user }}</b>
+    <br>
+    <br>
+    Należy do grupy:
+    {% for group in user.groups.all %}
+    <b>{{ group|upper }},</b>
+    {% endfor %}
+    {% else %}
+    Treść dostępna tylko dla zalogowanych użytkowników!
+    {% endif %}
 {% endblock %}
