@@ -74,7 +74,15 @@ Online version available at:
 
 http://qapp.thinkbox.pl/
 
-for tesing on localhost:
+test-user (dzj permissions): 
+```
+login: test_dzj / pass: djangodzj123
+```
+test-user (prod permissions): 
+```
+login: test_prod / pass: djangoprod123
+```
+For testing on localhost:
 
 1. Clone git repo to localhost.
 2. Install required packages.
@@ -91,7 +99,7 @@ If you will try to set server as production environment, uWSGI is recommended.
 ## Using
 
 Clear interface is available. You need to login first.
-Access to admin: add /admin after root path.
+Access to admin: add <i>/admin</i> after root path.
 
 ## Thanks
 

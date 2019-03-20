@@ -119,6 +119,15 @@ a {
     font-weight: bold;
 }
 
+.wp-table th.field-header {
+    width: 20%;
+}
+
+.wp-table td.separator {
+    text-align: center;
+    font-weight: bold;
+}
+
 .wp-table {
     font-size: 15px;
     border: 1px solid #CCCCCC;
@@ -287,6 +296,17 @@ a {
     position: relative;
     display: block;
     text-align: center;
+    margin: 4px 2px;
+}
+
+.upload-status-small {
+    word-wrap: break-word;
+    float: left;
+    width: 95%;
+    height: 20px;
+    position: relative;
+    display: block;
+    text-align: left;
     margin: 4px 2px;
 }
 
@@ -488,6 +508,11 @@ make the two columns stack on top of each other instead of next to each other */
     .upload-status {
         width: 200px;
         height: 150px;
+        font-size: 20px;
+    }
+
+    .upload-status-small {
+        height: 60px;
         font-size: 20px;
     }
 

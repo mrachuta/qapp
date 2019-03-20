@@ -6,3 +6,19 @@
   <a href="{% url 'login'%}">Kliknij aby zalogować się ponownie</a>
 </div>
 {% endblock %}
+
+{% block firstcard %}
+    <h3>Informacje o użytkowniku</h3>
+    <hr>
+    {% if user.is_authenticated %}
+    Zalogowany użytkownik: <b>{{ user }}</b>
+    <br>
+    <br>
+    Należy do grupy:
+    {% for group in user.groups.all %}
+    <b>{{ group|upper }},</b>
+    {% endfor %}
+    {% else %}
+    Treść dostępna tylko dla zalogowanych użytkowników!
+    {% endif %}
+{% endblock %}

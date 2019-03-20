@@ -22,7 +22,7 @@ class GateFileAddForm(forms.ModelForm):
             'file': u'Plik',
         }
         widgets = {
-            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera'}),
+            'file': forms.FileInput(attrs={'accept': 'image/*;capture-camera', 'onchange': 'CatchFile(this)'}),
         }
 
 
@@ -87,6 +87,7 @@ class GateAddForm(forms.ModelForm):
         self.fields['tram'].required = False
         self.fields['car'].required = False
         self.fields['bogie'].required = False
+        self.fields['content'].required = False
         self.fields['operation_no'].max_length = 6
         self.fields['operation_no'].min_length = 6
         self.fields['operation_no'].label = u'Numer operacji'
@@ -95,6 +96,7 @@ class GateAddForm(forms.ModelForm):
             (user.pk, '{} {} ({})'.format(user.last_name, user.first_name, user.username))
             for user in User.objects.all().order_by('last_name')
         ]
+        self.fields['content'].required = False
 
     def clean(self):
 
@@ -131,12 +133,15 @@ class GateAddForm(forms.ModelForm):
             foreman = OperationArea.objects.get(area=self.cleaned_data['area']).foreman
             self.cleaned_data['responsible'] = foreman
 
+        if not self.cleaned_data['content']:
+            self.cleaned_data['content'] = 'Brak dodatkowych wytycznych'
+
         errors_list = []
 
         req_integrity = {
             'BJC': {'tram': True, 'bogie': False, 'car': True, },
             'BJW': {'tram': False, 'bogie': True, 'car': False, },
-            'IKS': {'tram': True, 'bogie': False, 'car': True, },
+            'IKW': {'tram': True, 'bogie': False, 'car': True, },
             'IKK': {'tram': True, 'bogie': False, 'car': True, },
 
         }
@@ -144,7 +149,7 @@ class GateAddForm(forms.ModelForm):
         errors_integrity = {
             'BJC': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pole "wózek" powinno pozostać puste!',
             'BJW': u'Dla tego typu musisz wskazać "wózek"; pola "tramwaj" oraz "człon" powinny pozostać puste!',
-            'IKS': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pole "wózek" powinno pozostać puste!',
+            'IKW': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pole "wózek" powinno pozostać puste!',
             'IKK': u'Dla tego typu musisz wskazać "tramwaj" i "człon"; pola "wózek" powinno pozostać puste!',
         }
 
@@ -167,7 +172,7 @@ class GateAddForm(forms.ModelForm):
         req_unique = {
             'BJC': ['type', 'tram', 'car', 'area', 'operation_no'],
             'BJW': ['type', 'bogie', 'operation_no'],
-            'IKS': ['type', 'tram', 'name'],
+            'IKW': ['type', 'tram', 'name'],
             'IKK': ['type', 'tram', 'name'],
         }
 
@@ -203,8 +208,6 @@ class CommentFileAddForm(forms.ModelForm):
 
 
 class CommentAddForm(forms.ModelForm):
-
-    # gate_rating = forms.RadioSelect(choices=Gate.GATE_GRADES)
 
     class Meta:
         model = Comment
@@ -300,6 +303,7 @@ class GateChangeForm(forms.ModelForm):
         self.fields['tram'].required = False
         self.fields['car'].required = False
         self.fields['bogie'].required = False
+        self.fields['content'].required = False
         self.fields['responsible'].choices = [(None, '---------')] + [
             (user.pk, '{} {} ({})'.format(user.last_name, user.first_name, user.username))
             for user in User.objects.all().order_by('last_name')
@@ -312,6 +316,9 @@ class GateChangeForm(forms.ModelForm):
         if not self.cleaned_data['responsible']:
             foreman = OperationArea.objects.get(area=self.cleaned_data['area']).foreman
             self.cleaned_data['responsible'] = foreman
+
+        if not self.cleaned_data['content']:
+            self.cleaned_data['content'] = 'Brak dodatkowych wytycznych'
 
         curr_ob = Gate.objects.get(pk=self.instance.pk)
 
