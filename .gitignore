@@ -12,6 +12,7 @@ media
 .idea
 qapp/migrations
 dzj/secrets
+qapp/test_file.py
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
