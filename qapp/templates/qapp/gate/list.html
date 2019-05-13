@@ -16,24 +16,22 @@
         <table class="wp-table">
             <tr>
                 {% if 'bjw' in gate_type %}
-                <th>Wózek</th>
-                <th>Typ wózka</th>
+                <th><div class="rotated">Wózek</div></th>
                 {% else %}
-                <th>Tramwaj</th>
-                <th>Człon</th>
+                <th><div class="rotated">Tramwaj</div></th>
+                <th><div class="rotated">Człon</div></th>
                 {% endif %}
-                <th>Obszar</th>
-                <th>Numer operacji</th>
-                <th>Nazwa</th>
-                <th>Status bramki</th>
-                <th>Ocena</th>
-                <th class="center">Zaznacz</th>
+                <th><div class="rotated">Obszar</div></th>
+                <th><div class="rotated">Numer operacji</div></th>
+                <th><div class="rotated">Nazwa</div></th>
+                <th><div class="rotated">Status</div></th>
+                <th><div class="rotated">Ocena</div></th>
+                <th><div class="rotated">Zaznacz</div></th>
             </tr>
             {% for gate in gate_list %}
             <tr class="clickable" id="gate_{{ gate.id }}">
                 {% if 'bjw' in gate_type %}
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.bogie }}</a></td>
-                <td><a href="{{ gate.get_absolute_url }}">{{ gate.bogie.btype }}</a></td>
                 {% else %}
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.tram }}</a></td>
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.car }}</a></td>
@@ -41,7 +39,7 @@
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.area }}</a></td>
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.operation_no }}</a></td>
                 <td class="gate-name"><a href="{{ gate.get_absolute_url }}">{{ gate.name }}</a></td>
-                <td><a href="{{ gate.get_absolute_url }}">{{ gate.get_status_display }}</a></td>
+                <td><a href="{{ gate.get_absolute_url }}">{{ gate.status }}</a></td>
                 <td><a href="{{ gate.get_absolute_url }}">{{ gate.rating|default:"---" }}</a></td>
                 <td class="center">
                     <label for="{{ gate.id }}">

@@ -31,8 +31,12 @@ urlpatterns = [
 
 # Add Django site authentication urls (for login, logout, password management)
 urlpatterns += [
-    url(r'^accounts/login/$', auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
-    url(r'^accounts/logout/$', auth_views.LoginView.as_view(template_name="registration/logged_out.html"), name="logout"),
+    url(r'^accounts/login/$',
+        auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"
+        ),
+    url(r'^accounts/logout/$',
+        auth_views.LogoutView.as_view(template_name="registration/logged_out.html"), name="logout"
+        ),
 ]
 # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG:
