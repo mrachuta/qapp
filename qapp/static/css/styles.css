@@ -121,11 +121,27 @@ a {
     width: 50px;
 }
 
+.wp-table th:first-of-type {
+    height: 50px;
+    width: 50px;
+    padding-left: 15px;
+}
+
+.wp-table th:last-of-type {
+    height: 50px;
+    width: 50px;
+    padding-left: 55px;
+}
+
 .wp-table .rotated {
-    text-align: center;
+    text-align: left;
     font-weight: bold;
     position: relative;
+    top: 0px;
+    left: -12px;
     transform: rotate(270deg);
+    width: 60px;
+    height: 40px;
 }
 
 .wp-table th.field-header {
@@ -135,6 +151,29 @@ a {
 .wp-table td.separator {
     text-align: center;
     font-weight: bold;
+}
+
+.wp-table td a {
+    display: inline-block;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+
+.wp-table .checkbox-area {
+    display: inline-block;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-top: -20px;
+    margin-bottom: -20px;
+}
+
+.wp-table tr.clickable td:last-of-type {
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .wp-table {
@@ -470,9 +509,9 @@ make the two columns stack on top of each other instead of next to each other */
     }
 
     input[type=submit] {
-        width: 280px;
+        width: 440px;
         height: 60px;
-        font-size: 30px;
+        font-size: 46px;
     }
 
     select {
@@ -543,7 +582,7 @@ make the two columns stack on top of each other instead of next to each other */
     }
 
     .wp-table {
-        width: 90%;
+        width: 95%;
         font-size: 32px;
     }
 
@@ -552,13 +591,39 @@ make the two columns stack on top of each other instead of next to each other */
         width: 50px;
     }
 
+    .wp-table th.field-header {
+        width: 40%;
+    }
+
+    .wp-table th:first-of-type {
+        padding-left: 15px;
+    }
+
+    .wp-table th:last-of-type {
+        padding-left: 35px;
+    }
+
     .wp-table .rotated {
-       left: -30px;
+       top: 35px;
     }
 
     .wp-table .checkbox-area {
-        width: 50px;
-        height: 50px;
+       padding-top: 15px;
+       padding-bottom: 15px;
+       padding-left: 40px;
+       padding-right: 40px;
+       margin-top: -20px;
+       margin-bottom: -20px;
+    }
+
+    .wp-table tr td input[type=file] {
+        margin-top: 40px;
+        margin-left: 50px;
+        transform: scale(1.8);
+    }
+
+    .wp-table tr td input[type=checkbox] {
+        transform: scale(2.0);
     }
 
     .checkbox-area input[type=checkbox] {
@@ -571,6 +636,16 @@ make the two columns stack on top of each other instead of next to each other */
         right: -230px;
         width: 350px;
     }
+
+    #my_gates .wp-table tr th:nth-of-type(5),
+    #my_gates .wp-table tr td:nth-of-type(5),
+    #my_gates .wp-table tr th:nth-of-type(6),
+    #my_gates .wp-table tr td:nth-of-type(6),
+    #my_gates .wp-table tr th:nth-of-type(8),
+    #my_gates .wp-table tr td:nth-of-type(8) {
+        display: none;
+    }
+
 
     .login-table {
         font-size: 50px;
