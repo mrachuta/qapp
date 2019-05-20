@@ -8,22 +8,22 @@
 <div class="card" id="my_gates">
     <table class="wp-table">
         <tr>
-            <th>Typ</th>
-            <th>Tramwaj</th>
-            <th>Człon</th>
-            <th>Wózek</th>
-            <th>Obszar</th>
-            <th>Numer operacji</th>
-            <th>Nazwa</th>
+            <th><div class="rotated">Typ</div></th>
+            <th><div class="rotated">Tramwaj</div></th>
+            <th><div class="rotated">Człon</div></th>
+            <th><div class="rotated">Wózek</div></th>
+            <th><div class="rotated">Obszar</div></th>
+            <th><div class="rotated">Numer operacji</div></th>
+            <th><div class="rotated">Nazwa</div></th>
             {% if request.user|dzj_member %}
-            <th>Odpowiedzialny</th>
+            <th><div class="rotated">Odpow.</div></th>
             {% else %}
-            <th>Autor</th>
+            <th><div class="rotated">Autor</div></th>
             {% endif %}
-            <th>Status</th>
-            <th>Ocena</th>
+            <th><div class="rotated">Status</div></th>
+            <th><div class="rotated">Ocena</div></th>
             {% if request.user|dzj_member %}
-            <th>Edytuj</th>
+            <th><div class="rotated">Edytuj</div></th>
             {% endif %}
         </tr>
         {% for gate in user_gates %}
@@ -48,7 +48,7 @@
                 </a>
             </td>
             {% endif %}
-            <td><a href="{{ gate.get_absolute_url }}">{{ gate.get_status_display }}</a></td>
+            <td><a href="{{ gate.get_absolute_url }}">{{ gate.status }}</a></td>
             <td><a href="{{ gate.get_absolute_url }}">{{ gate.rating|default:"---" }}</a></td>
             {% if request.user|dzj_member %}
             <td class="center"><a href="{% url 'qapp:edit' gate.pk %}"><img src="{% static 'img/edit.png' %}"></a></td>
