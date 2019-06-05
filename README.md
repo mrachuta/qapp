@@ -46,7 +46,7 @@ Extra features in qapp which are not supported in original app:
 * friendly and fast filtering of objects,  
 * current status for logged user: how many Gate objects was declined by QA etc.  
   
-# Technologies
+## Technologies
 * Backend: Python3 + Django,
 * Frontend: HTML + CSS,
 * Scripts: JavaScript,
