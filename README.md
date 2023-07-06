@@ -12,11 +12,12 @@ qapp - quality assurance app based on Django.
 ## General info
 During work for one of biggest Polish company related to design & production of city cars,
 I participated in quality control of these vehicles on all levels. At the beginning, inspections
-was made using classic paper sheets. After some time, managers decided that there is an special appnecessary. In results of this, an 
-Java app (IBM Lotus Notes/Domino environment) was created. Unfortunately, due to lack of developers only two version was released.
+were made using classic paper sheets. After some time, managers decided that it would be good to use some software/application
+to handle this process. In results of this, an Java app (IBM Lotus Notes/Domino environment) was created. 
+Unfortunately, due to lack of developers only two version were released.
 Disadvantages of app:
-* app was build in very rare environment (even if it is Java, there are not enough IBM-Domino developers on market)
-* code is very complicated - there is a lot of 'if' statements,
+* app was build in very 'exclusive' environment (even if it is Java, there are not enough IBM-Domino developers on market)
+* code is very complicated - there are a lot of 'if' statements,
 * app is not native; it works only inside Lotus Notes Client,
 * problem with access to application via VPN,
 * no support for mobile devices,
@@ -27,18 +28,18 @@ Advantages of qapp:
 - app is a Python app (very popular language),
 - core for app is Django, which is open-source and very popular Python web framework,
 - code is simplified, a lot of Django-native mechanisms and solutions are used,
-- for running as web service, there is no VPN necessary if app is published to generaly available web server,
+- for running as web service, there is no VPN necessary - app can be published on public http server,
 - support for mobile devices & computers.
 
 Extra features in qapp that are not supported in original app:
   
-* easy adding of new Gate categories (custom ListView),  
+* easy way to ad new categories (custom ListView),  
 * editing of existing Gate(s) object(s) without special permissions 
 (permissions can be granted via admin panel),  
 * multi-adding (possibility to add one Gate to more than one parent object),  
 * multi-accepting (possibility to change status for multiple Gate(s) in one click),  
 * possibility to upload photo/file directly from mobile phone during inspection,  
-* resizing photos on client-side (reduce size - on client side and server side; speed up process),  
+* resizing photos on client-side (reduce file size on client side and server side; speeding up process),  
 * logs for each Gate object (each action or change is logged in log page),  
 * friendly and fast filtering of objects,
 * current status for logged user: how many Gate objects was declined by QA etc.  
@@ -81,7 +82,7 @@ Used libraries:
    - *prod* with *qapp view*, *qapp add*, *qapp change* permissions
 6. In admin panel, create two users and assign them to different groups
 
-This is sufficient to check app on local environment.
+This is sufficient to test app in local environment.
 If you want to setup application on production environment, uWSGI is recommended.
 
 ## Usage
